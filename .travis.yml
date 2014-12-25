@@ -8,7 +8,7 @@ install:
   - pip install coveralls
 
 script:
-  - coveralls run setup.py nosetests
+  - coverage run setup.py nosetests
   - python setup.py flake8
 
 after_success:
