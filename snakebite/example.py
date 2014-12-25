@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from helpers.json_helper import jsonify
+from __future__ import absolute_import
 import falcon
+from snakebite.controllers.hooks import serialize
 
 # This is an example app built with Falcon framework.
 # Real projects are not meant to be this trivial, of course.
@@ -14,6 +15,8 @@ import falcon
 
 
 class Restaurant(object):
+
+    @falcon.after(serialize)
     def on_get(self, req, res):
         """"
         Handles GET requests for Restaurant
@@ -40,7 +43,7 @@ class Restaurant(object):
         }
 
         res.status = falcon.HTTP_200
-        res.body = jsonify(result_json)
+        res.body = result_json
 
 
 api = application = falcon.API()

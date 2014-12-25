@@ -2,19 +2,33 @@
 
 from __future__ import absolute_import
 import falcon
-from snakebite.helpers.json_helper import jsonify
-from snakebite.controllers.hooks.restaurant import validate_create_restaurant
+from snakebite.controllers.hooks import deserialize, serialize
+from snakebite.controllers.schema.restaurant import CreateRestaurantSchema
 
 
-class Restaurant(object):
+# -------- BEFORE_HOOK functions
+def deserialize_create(req, res, resource):
+    return deserialize(req, res, resource, schema=CreateRestaurantSchema())
+
+# -------- END functions
+
+
+class Collection(object):
     def __init__(self):
         pass
 
+    @falcon.before(deserialize)
+    @falcon.after(serialize)
     def on_get(self, req, res):
         res.status = falcon.HTTP_200
-        res.body = jsonify({'test': 'example'})
+        res.body = req.params.get('query')
 
-    @falcon.before(validate_create_restaurant)
+    @falcon.before(deserialize_create)
+    @falcon.after(serialize)
     def on_post(self, req, res):
         res.status = falcon.HTTP_200
-        res.body = jsonify(req.params['data'])
+        res.body = req.params.get('body')
+
+
+class Item(object):
+    pass
