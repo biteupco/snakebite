@@ -3,6 +3,9 @@ language:
 python:
   - '2.7'
 
+install:
+  - python setup.py test
+
 script:
   - python setup.py nosetests
   - python setup.py flake8
