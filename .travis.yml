@@ -3,6 +3,10 @@ language:
 python:
   - '2.7'
 
+script:
+  - python setup.py nosetests
+  - python setup.py flake8
+
 notifications:
   email:
   - kelvintaywl@gmail.com

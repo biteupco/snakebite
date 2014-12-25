@@ -20,6 +20,8 @@ You may prefer to setup a virtual env first for better package management.
 $ python setup.py develop
 ```
 
+## Example app
+
 Once dependencies are installed, we just need to run the server!
 
 ```
@@ -28,6 +30,28 @@ $ gunicorn example:api
 ```
 
 Point your browser to `http://localhost:8000/restaurants``` to see the example json response from our code!
+
+> Note that this is just an example app to show you the rough idea of buliding with Falcon.
+
+To run the actual application, do the following commands:
+
+```
+/* if you are not in the uppermost 'snakebite' directory */
+$ cd ..
+$ gunicorn runserver:app
+```
+
+## Testing & Contributing
+
+Before pushing codes, please ensure the following commands below are run before pushing.
+
+```
+$ python setup.py flake8
+$ python setup.py nosetest
+```
+
+Let's try to keep the code clean with Flake8, and less bug-free with testing!
+Target coverage: 80%
 
 
 ## TODO
