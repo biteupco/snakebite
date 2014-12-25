@@ -5,10 +5,14 @@ python:
 
 install:
   - python setup.py test
+  - pip install coveralls
 
 script:
-  - python setup.py nosetests
+  - coveralls run setup.py nosetests
   - python setup.py flake8
+
+after_success:
+  coveralls
 
 notifications:
   email:

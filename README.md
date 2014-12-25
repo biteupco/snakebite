@@ -15,8 +15,7 @@ $ git clone https://github.com/wheresmybento/snakebite.git
 $ cd snakebite
 ```
 
-We first need to install all the dependencies or packages needed.
-You may prefer to setup a virtual env first for better package management.
+We first need to install all the dependencies or packages needed (a virtualenv is recommended).
 
 ```
 $ python setup.py develop
