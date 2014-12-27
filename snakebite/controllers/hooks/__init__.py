@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import
 from snakebite.helpers.json import map_query
-from snakebite.libs.error import HTTPBadRequest
+from snakebite.libs.error import HTTPBadRequest, HTTPNotAcceptable
 import json
 import colander
 
@@ -18,7 +18,15 @@ def deserialize(req, res, resource, schema=None):
     :param resource: response pbject
     :param schema: colander Schema object
     """
+
+    def _is_json_type(content_type):
+        return content_type == 'application/json'
+
     if req.method.upper() in ['POST', 'PUT', 'DELETE']:
+
+        if not _is_json_type(req.content_type):
+            raise HTTPNotAcceptable(description='JSON required. '
+                                                'Invalid Content-Type\n{}'.format(req.content_type))
 
         req.params['body'] = {}
 

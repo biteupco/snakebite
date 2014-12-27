@@ -21,26 +21,24 @@ We first need to install all the dependencies or packages needed (a virtualenv i
 $ python setup.py develop
 ```
 
-## Example app
-
-Once dependencies are installed, we just need to run the server!
-
-```
-$ cd snakebite
-$ gunicorn example:api
-```
-
-Point your browser to `http://localhost:8000/restaurants``` to see the example json response from our code!
-
-> Note that this is just an example app to show you the rough idea of buliding with Falcon.
-
-To run the actual application, do the following commands:
+## Up and Running
+ Assuming you are already in the project directory, simply run the following command:
 
 ```
-/* if you are not in the uppermost 'snakebite' directory */
-$ cd ..
 $ gunicorn runserver:app
 ```
+
+Point your browser to localhost:8000/restaurants (thereby making a GET request).
+Try adding params in your URL, for instance, http://localhost:8000/restaurants?location=Roppongi&tags=casual
+
+To try a POST request, you can do the following via the Terminal:
+
+```
+$ curl -X  POST -H "Content-Type:application/json" -d '{"name": "yoshinoya", "location": "tsukiji"}' http://localhost:8000/restaurants
+```
+
+Of course, you may prefer to use POSTMAN.io (easy GUI) to make these POST request. That is fine too.
+Do note that Snakebite only accepts json [content-type](http://en.wikipedia.org/wiki/Internet_media_type) for POST requests.
 
 ## Testing & Contributing
 

@@ -18,3 +18,11 @@ class HTTPUnauthorized(falcon.HTTPUnauthorized):
     may no longer be needed when we use talons.auth for authentication
     """
     pass
+
+
+class HTTPNotAcceptable(falcon.HTTPNotAcceptable):
+    """
+    wrapper for HTTP Not Acceptable response
+    status code: 406
+    """
+    pass

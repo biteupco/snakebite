@@ -5,7 +5,7 @@ import unittest
 import mock
 import colander
 from snakebite.controllers.hooks import serialize, deserialize
-from snakebite.libs.error import HTTPBadRequest
+from snakebite.libs.error import HTTPBadRequest, HTTPNotAcceptable
 from ast import literal_eval as eval
 
 dummy = mock.Mock()
@@ -37,6 +37,7 @@ class TestDeserialize(unittest.TestCase):
         for t in stream_tests:
             req = mock.Mock()
             req.method = t['method']
+            req.content_type = 'application/json'
             req.params = {}
             req.stream.read.return_value = t['stream']
 
@@ -80,7 +81,7 @@ class TestDeserialize(unittest.TestCase):
                 deserialize(req, dummy, dummy, schema=t['schema'])
                 self.assertDictEqual(req.params['query'], t['expected'])
 
-    def test_empty(self):
+    def test_empty_stream(self):
         query_test = {'method': 'GET', 'query': '', 'expected': {}}
 
         req = mock.Mock()
@@ -94,10 +95,32 @@ class TestDeserialize(unittest.TestCase):
 
         req = mock.Mock()
         req.method = stream_test['method']
+        req.content_type = 'application/json'
         req.params = {}
         req.stream.read.return_value = stream_test['stream']
         deserialize(req, dummy, dummy)
         self.assertEquals(req.params['body'], stream_test['expected'])
+
+    def test_content_type_check(self):
+        tests = [
+            {'content_type': 'text/html', 'error': True},
+            {'content_type': 'application/xml', 'error': True},
+            {'content_type': 'application/gzip', 'error': True},
+            {'content_type': 'application/json', 'error': False}
+        ]
+
+        for t in tests:
+
+            req = mock.Mock()
+            req.method = 'POST'
+            req.content_type = t['content_type']
+            req.params = {}
+            req.stream.read.return_value = ""
+            if t['error'] is True:
+                self.assertRaises(HTTPNotAcceptable, deserialize, req, dummy, dummy)
+            else:
+                deserialize(req, dummy, dummy)
+                self.assertEquals(req.params['body'], {})
 
 
 class TestSerialize(unittest.TestCase):
