@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
-import unittest
-import mock
 import colander
+import mock
+from falcon import testing
+from ast import literal_eval as eval
 from snakebite.controllers.hooks import serialize, deserialize
 from snakebite.libs.error import HTTPBadRequest, HTTPNotAcceptable
-from ast import literal_eval as eval
 
 dummy = mock.Mock()
 
@@ -16,7 +16,7 @@ class MockSchema(colander.MappingSchema):
     age = colander.SchemaNode(colander.Int())
 
 
-class TestDeserialize(unittest.TestCase):
+class TestDeserialize(testing.TestBase):
 
     def test_deserialize(self):
         stream_tests = [
@@ -123,7 +123,7 @@ class TestDeserialize(unittest.TestCase):
                 self.assertEquals(req.params['body'], {})
 
 
-class TestSerialize(unittest.TestCase):
+class TestSerialize(testing.TestBase):
 
     def test_serialize(self):
 

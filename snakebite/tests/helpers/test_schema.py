@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
-import unittest
+from falcon import testing
 import colander
 import mock
 from snakebite.helpers.schema import CommaList, CommaIntList
@@ -9,7 +9,7 @@ from snakebite.helpers.schema import CommaList, CommaIntList
 dummy = mock.Mock()
 
 
-class TestCommaList(unittest.TestCase):
+class TestCommaList(testing.TestBase):
 
     def test_deserialize(self):
         tests = [
@@ -23,7 +23,7 @@ class TestCommaList(unittest.TestCase):
             self.assertEqual(result, t['expected'])
 
 
-class TestCommaIntList(unittest.TestCase):
+class TestCommaIntList(testing.TestBase):
 
     def test_deserialize(self):
         tests = [

@@ -25,7 +25,7 @@ $ python setup.py develop
  Assuming you are already in the project directory, simply run the following command:
 
 ```
-$ gunicorn runserver:app
+$ gunicorn manage:snakebite.app
 ```
 
 Point your browser to localhost:8000/restaurants (thereby making a GET request).

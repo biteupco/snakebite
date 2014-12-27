@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
-import unittest
+from falcon import testing
 from snakebite.helpers.json import map_query
 
 
-class TestJson(unittest.TestCase):
+class TestJson(testing.TestBase):
 
     def test_map_query(self):
         tests = [
