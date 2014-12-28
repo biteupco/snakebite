@@ -42,20 +42,27 @@ Do note that Snakebite only accepts json [content-type](http://en.wikipedia.org/
 
 ## Testing & Contributing
 
-Before pushing codes, please ensure the following commands below are run before pushing.
+Before pushing codes, please ensure that the code is checked against flake8 firstly
 
 ```
 $ python setup.py flake8
-$ python setup.py nosetest
+```
+
+Next, to check tests and coverage reports, do the following:
+
+```
+$ coverage run setup.py nosetests
 ```
 
 Let's try to keep the code clean with Flake8, and less bug-free with testing!
 Target coverage: 80%
 
+## DEPLOYING
+
+When deploying to environments other than your local environment ('dev'), please ensure that you set the 'BENRI_ENV' environment variable in the OS before running the server.
+This is so that the right config file can be loaded for initializing the application.
+
 
 ## TODO
 
 1. Setup MongoDB and models
-2. tests
-3. use colander for management of requests
-4. controllers to be used instead of a one-python-file app.
