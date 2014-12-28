@@ -5,7 +5,7 @@ python:
 
 install:
   - python setup.py test
-  - pip install coveralls
+  - pip install python-coveralls
 
 script:
   - coverage run setup.py nosetests
