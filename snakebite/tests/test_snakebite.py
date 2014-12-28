@@ -15,7 +15,7 @@ class TestMain(testing.TestBase):
         self.db = snakebite.db
 
     def test_db(self):
-        self.assertIsNone(self.db)
+        self.assertIsNotNone(self.db)
 
     def test_config(self):
         # list out important sections and options in config files that should be loaded

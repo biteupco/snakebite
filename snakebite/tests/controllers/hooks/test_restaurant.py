@@ -34,12 +34,16 @@ class TestRestaurantCollection(testing.TestBase):
 
         tests = [
             {
-                'data': '{"name": "KFC", "location": "ueno"}',
-                'expected': {"name": "KFC", "location": "ueno", "tags": []}
+                'data': '{"name": "KFC", "address": "ueno"}',
+                'expected': {"name": "KFC", "address": "ueno", "description": "", "email": "", "tags": []}
             },
             {
-                'data': '{"name": "KFC", "location": "ueno", "tags": "a,b,c"}',
-                'expected': {"name": "KFC", "location": "ueno", "tags": ["a", "b", "c"]}
+                'data': '{"name": "KFC", "address": "ueno", "tags": "a,b,c"}',
+                'expected': {"name": "KFC", "address": "ueno", "description": "", "email": "", "tags": ["a", "b", "c"]}
+            },
+            {
+                'data': '{"name": "KFC", "address": "ueno", "description": "KFC desu", "email": "", "tags": "a,b,c"}',
+                'expected': {"name": "KFC", "address": "ueno", "description": "KFC desu", "email": "", "tags": ["a", "b", "c"]}
             }
         ]
 

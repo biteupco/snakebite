@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import
 import falcon
+import mongoengine as mongo
 from conf import get_config
 from snakebite.controllers import restaurant
 
@@ -10,7 +11,7 @@ class SnakeBite(object):
 
     __shared_state = {}  # Borg Singleton design pattern
 
-    def __init__(self, database=None):
+    def __init__(self):
         self.__dict__ = self.__shared_state
 
         if 'app' not in self.__shared_state:
@@ -21,7 +22,7 @@ class SnakeBite(object):
             self.app.add_route('/restaurants', restaurant.Collection())
 
             # setup database
-            self.db = database
+            self._setup_db()
 
     def cors_middleware(self):
         """
@@ -38,3 +39,19 @@ class SnakeBite(object):
             res.set_headers(header)
 
         return fn
+
+    def _setup_db(self, db_section='mongodb'):
+
+        # get all config values about DB
+        db_config = dict(self.config.items(db_section))  # map
+
+        db_name = db_config.pop('name')
+        db_config['port'] = int(db_config['port'])
+
+        try:
+            self.db = mongo.connect(db_name, **db_config)
+        except Exception as e:
+            raise e
+
+        # log
+        # print('connected to Database: {}'.format(self.db))
