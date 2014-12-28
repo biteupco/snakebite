@@ -56,6 +56,3 @@ Target coverage: 80%
 ## TODO
 
 1. Setup MongoDB and models
-2. tests
-3. use colander for management of requests
-4. controllers to be used instead of a one-python-file app.
