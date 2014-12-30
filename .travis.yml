@@ -7,6 +7,9 @@ install:
   - python setup.py test
   - pip install python-coveralls
 
+services:
+  - mongodb
+
 script:
   - coverage run --source=snakebite setup.py nosetests
   - python setup.py flake8

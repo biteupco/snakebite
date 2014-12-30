@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import
 import falcon
+import os
 import mongoengine as mongo
 from conf import get_config
 from snakebite.controllers import restaurant
@@ -15,7 +16,8 @@ class SnakeBite(object):
         self.__dict__ = self.__shared_state
 
         if 'app' not in self.__shared_state:
-            self.config = get_config()
+            env = os.environ.get('BENRI_ENV', 'dev')
+            self.config = get_config(env)
             self.app = falcon.API(before=[self.cors_middleware()])
 
             # load routes
@@ -48,10 +50,7 @@ class SnakeBite(object):
         db_name = db_config.pop('name')
         db_config['port'] = int(db_config['port'])
 
-        try:
-            self.db = mongo.connect(db_name, **db_config)
-        except Exception as e:
-            raise e
+        self.db = mongo.connect(db_name, **db_config)
 
         # log
         # print('connected to Database: {}'.format(self.db))

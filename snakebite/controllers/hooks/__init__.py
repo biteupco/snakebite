@@ -52,11 +52,10 @@ def deserialize(req, res, resource, schema=None):
 
         req.params['query'] = {}
 
-        query = req.query_string
-        if not query:
+        if not req.query_string:
             return
 
-        query = map_query(query)  # str to map
+        query = map_query(req.query_string)
 
         if schema:
             try:

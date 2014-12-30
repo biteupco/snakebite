@@ -5,12 +5,11 @@ import os
 from ConfigParser import SafeConfigParser
 
 
-def get_config():
+def get_config(env='dev'):
     """
     :return: a SafeConfigParser object, with config values loaded from file_path
     """
     # default env: 'dev'
-    env = os.environ.get('BENRI_ENV', 'dev')
     file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                              '{}.ini'.format(env))
 
