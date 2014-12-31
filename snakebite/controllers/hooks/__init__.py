@@ -3,7 +3,9 @@
 from __future__ import absolute_import
 from snakebite.helpers.json import map_query
 from snakebite.libs.error import HTTPBadRequest, HTTPNotAcceptable
+import mongoengine as mongo
 import json
+from bson import json_util
 import colander
 
 
@@ -50,11 +52,10 @@ def deserialize(req, res, resource, schema=None):
 
         req.params['query'] = {}
 
-        query = req.query_string
-        if not query:
+        if not req.query_string:
             return
 
-        query = map_query(query)  # str to map
+        query = map_query(req.query_string)
 
         if schema:
             try:
@@ -75,5 +76,15 @@ def serialize(req, res, resource):
     :param res: response object
     :param resource: resource object
     """
-    if isinstance(res.body, dict):
-        res.body = json.dumps(res.body, encoding='UTF-8')
+    def _to_json(obj):
+        # base cases:
+        if isinstance(obj, mongo.Document):
+            return obj._data
+        if type(obj) in [int, str]:
+            return obj
+        if isinstance(obj, dict):
+            return {k: _to_json(v) for k, v in obj.iteritems()}
+        if isinstance(obj, mongo.queryset.queryset.QuerySet):
+            return [_to_json(item) for item in obj]
+
+    res.body = json_util.dumps(_to_json(res.body))

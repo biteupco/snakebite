@@ -8,6 +8,9 @@ install:
   - pip install python-coveralls
   - touch logs/snakebite.log
 
+services:
+  - mongodb
+
 script:
   - coverage run --source=snakebite setup.py nosetests
   - python setup.py flake8

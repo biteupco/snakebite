@@ -5,6 +5,7 @@ import falcon
 import logging
 from snakebite.controllers.hooks import deserialize, serialize
 from snakebite.controllers.schema.restaurant import CreateRestaurantSchema
+from snakebite.models.restaurant import Restaurant
 
 
 # -------- BEFORE_HOOK functions
@@ -24,13 +25,22 @@ class Collection(object):
     @falcon.after(serialize)
     def on_get(self, req, res):
         res.status = falcon.HTTP_200
-        res.body = req.params.get('query')
+        query_params = req.params.get('query')
+
+        restaurants = Restaurant.objects(**query_params)
+        res.body = {'items': restaurants, 'count': len(restaurants)}
 
     @falcon.before(deserialize_create)
     @falcon.after(serialize)
     def on_post(self, req, res):
         res.status = falcon.HTTP_200
-        res.body = req.params.get('body')
+        data = req.params.get('body')
+
+        # save to DB
+        restaurant = Restaurant(**data)
+        restaurant.save()
+
+        res.body = restaurant
 
 
 class Item(object):

@@ -12,9 +12,9 @@ class TestJson(testing.TestBase):
             {'query': 'a=A', 'expected': {'a': 'A'}},
             {'query': 'a=1&b=2&c=3', 'expected': {'a': '1', 'b': '2', 'c': '3'}},
             {'query': '', 'expected': {}},
-            {'query': 'a=A|b=B=C', 'delim': '|', 'expected': {'a': 'A', 'b': 'B'}}
+            {'query': 'a=A&b=B&b=C', 'delim': '|', 'expected': {'a': 'A', 'b': ['B', 'C']}}
         ]
 
         for t in tests:
-            result = map_query(t['query'], delim=t.get('delim', '&'))
+            result = map_query(t['query'])
             self.assertDictEqual(result, t['expected'])

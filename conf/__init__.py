@@ -5,12 +5,11 @@ import os
 from ConfigParser import SafeConfigParser
 
 
-def get_config():
+def get_config(env='dev'):
     """
-    :return: a SafeConfigParser object, with config values loaded from file_path
+    :return: a dict parsed from a SafeConfigParser object, with config values loaded from file_path
     """
     # default env: 'dev'
-    env = os.environ.get('BENRI_ENV', 'dev')
     file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                              '{}.ini'.format(env))
 
@@ -18,4 +17,9 @@ def get_config():
     if not config_parser.read(file_path):
         raise IOError('Invalid Config File. ConfigParser could not read config file: {}'.format(file_path))
 
-    return config_parser
+
+    config_map = {}
+    for section in config_parser.sections():
+        config_map[section] = {k: v for (k, v) in config_parser.items(section)}
+
+    return config_map
