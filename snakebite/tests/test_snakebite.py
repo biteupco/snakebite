@@ -3,12 +3,14 @@
 from __future__ import absolute_import
 from falcon import testing
 import mock
+import logging
 from snakebite import SnakeBite
 
 
 class TestMain(testing.TestBase):
 
-    def before(self):
+    def setUp(self):
+        logging.disable(logging.INFO)
         snakebite = SnakeBite()
         self.api = snakebite.app
         self.config = snakebite.config

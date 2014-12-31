@@ -2,8 +2,12 @@
 
 from __future__ import absolute_import
 import falcon
+import logging
+import os
+from logging.handlers import TimedRotatingFileHandler
 from conf import get_config
 from snakebite.controllers import restaurant
+from snakebite.constants import DATETIME_FORMAT
 
 
 class SnakeBite(object):
@@ -16,6 +20,8 @@ class SnakeBite(object):
         if 'app' not in self.__shared_state:
             self.config = get_config()
             self.app = falcon.API(before=[self.cors_middleware()])
+
+            self.set_logging()
 
             # load routes
             self.app.add_route('/restaurants', restaurant.Collection())
@@ -38,3 +44,18 @@ class SnakeBite(object):
             res.set_headers(header)
 
         return fn
+
+    def set_logging(self):
+        logger = logging.getLogger(__name__)
+        logger.setLevel(getattr(logging, self.config.get('logging', 'level').upper()))
+        log_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                     '../logs/snakebite.log')
+
+        # logs will be generated / separated on a daily basis
+        fh = TimedRotatingFileHandler(filename=log_file_path, when='D', interval=1)
+        fh.setLevel(logging.DEBUG)
+        fh.setFormatter(
+            logging.Formatter(fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt=DATETIME_FORMAT)
+        )
+        logger.addHandler(fh)
+        return logger
