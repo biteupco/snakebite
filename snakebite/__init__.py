@@ -21,15 +21,13 @@ class SnakeBite(object):
             self.config = get_config()
             self.app = falcon.API(before=[self.cors_middleware()])
 
-            logger = self.set_logging()
+            self.set_logging()
 
             # load routes
             self.app.add_route('/restaurants', restaurant.Collection())
-            logger.info('routes loaded')
 
             # setup database
             self.db = database
-            logger.info('database setup done')
 
     def cors_middleware(self):
         """
@@ -50,7 +48,8 @@ class SnakeBite(object):
     def set_logging(self):
         logger = logging.getLogger(__name__)
         logger.setLevel(getattr(logging, self.config.get('logging', 'level').upper()))
-        log_file_path = self.config.get('logging', 'file_path')
+        log_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                     '../logs/snakebite.log')
 
         # logs will be generated / separated on a daily basis
         fh = TimedRotatingFileHandler(filename=log_file_path, when='D', interval=1)
