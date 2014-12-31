@@ -1,14 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
-import mongoengine as mongo
+from conf import get_config
+from snakebite import create_snakebite
 
 
-def setup_testDB():
-
-    mongo.connect('benri_test')
-
-
-def teardown_testDB():
-    db = mongo.connect('benri_test')
-    db.drop_database('benri_test')
+def get_test_snakebite():
+    config = get_config('testing')
+    return create_snakebite(**config)

@@ -6,6 +6,7 @@ python:
 install:
   - python setup.py test
   - pip install python-coveralls
+  - touch logs/snakebite.log
 
 services:
   - mongodb
@@ -16,6 +17,9 @@ script:
 
 after_success:
   coveralls
+
+after_script:
+    - rm logs/snakebite.log
 
 notifications:
   email:

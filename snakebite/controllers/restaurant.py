@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import
 import falcon
+import logging
 from snakebite.controllers.hooks import deserialize, serialize
 from snakebite.controllers.schema.restaurant import CreateRestaurantSchema
 from snakebite.models.restaurant import Restaurant
@@ -12,6 +13,8 @@ def deserialize_create(req, res, resource):
     return deserialize(req, res, resource, schema=CreateRestaurantSchema())
 
 # -------- END functions
+
+logger = logging.getLogger(__name__)
 
 
 class Collection(object):

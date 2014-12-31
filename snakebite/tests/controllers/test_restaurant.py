@@ -2,22 +2,20 @@
 
 from __future__ import absolute_import
 from falcon import testing
-from snakebite import SnakeBite
+from snakebite.tests import get_test_snakebite
 from snakebite.controllers import restaurant
 from snakebite.models.restaurant import Restaurant
-from snakebite.tests import setup_testDB, teardown_testDB
 import json
 
 
 class TestRestaurantCollectionGet(testing.TestBase):
 
     def setUp(self):
-        setup_testDB()
         self.resource = restaurant.Collection()
-        self.api = SnakeBite().app
+        self.api = get_test_snakebite().app
+
         self.api.add_route('/restaurants', self.resource)
         self.srmock = testing.StartResponseMock()
-
         self.restaurants = [
             Restaurant(name='a', description='desc', email='a@b.com', address='tokyo'),
             Restaurant(name='b', description='description', email='b@a.com', address='kyoto', tags=['b'])
@@ -27,7 +25,6 @@ class TestRestaurantCollectionGet(testing.TestBase):
 
     def tearDown(self):
         Restaurant.objects.delete()
-        teardown_testDB()
 
     def test_collection_on_get(self):
 
@@ -37,7 +34,6 @@ class TestRestaurantCollectionGet(testing.TestBase):
             {'query_string': 'name=c', 'expected': {"count": 0}},
             {'query_string': 'email=b@a.com', 'expected': {"count": 1}}
         ]
-
         for t in tests:
             res = self.simulate_request('/restaurants',
                                         query_string=t['query_string'],
@@ -54,15 +50,13 @@ class TestRestaurantCollectionGet(testing.TestBase):
 class TestRestaurantCollectionPost(testing.TestBase):
 
     def setUp(self):
-        setup_testDB()
         self.resource = restaurant.Collection()
-        self.api = SnakeBite().app
+        self.api = get_test_snakebite().app
         self.api.add_route('/restaurants', self.resource)
         self.srmock = testing.StartResponseMock()
 
     def tearDown(self):
         Restaurant.objects.delete()
-        teardown_testDB()
 
     def test_collection_on_post(self):
 
