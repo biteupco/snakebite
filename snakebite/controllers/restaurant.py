@@ -4,13 +4,13 @@ from __future__ import absolute_import
 import falcon
 import logging
 from snakebite.controllers.hooks import deserialize, serialize
-from snakebite.controllers.schema.restaurant import CreateRestaurantSchema
-from snakebite.models.restaurant import Restaurant
+from snakebite.controllers.schema.restaurant import RestaurantSchema
+from snakebite.models.restaurant import Restaurant, Menu
 
 
 # -------- BEFORE_HOOK functions
 def deserialize_create(req, res, resource):
-    return deserialize(req, res, resource, schema=CreateRestaurantSchema())
+    return deserialize(req, res, resource, schema=RestaurantSchema())
 
 # -------- END functions
 
@@ -37,7 +37,11 @@ class Collection(object):
         data = req.params.get('body')
 
         # save to DB
+        menu_data = data.pop('menus')  # extract info meant for menus
+
         restaurant = Restaurant(**data)
+        restaurant.menus = [Menu(**menu) for menu in menu_data]
+
         restaurant.save()
 
         res.body = restaurant

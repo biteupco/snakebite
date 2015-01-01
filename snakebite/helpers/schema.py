@@ -25,3 +25,26 @@ class CommaIntList(CommaList):
         for item in list:
             if not isinstance(item, int):
                 raise colander.Invalid(node, error_msg)
+
+
+class Currency(object):
+
+    currency_map = {
+        'JPY': u'¥',
+        'USD': u'$',
+        'GBP': u'£',
+        'SGD': u'SGD$'
+    }
+
+    def deserialize(self, node, cstruct):
+        if not cstruct or cstruct is colander.null:
+            return 'JPY'
+        return cstruct[:3]  # trim to first 3 characters
+
+    @staticmethod
+    def is_valid(node, value):
+        currency_list = Currency.currency_map.keys()
+        error_msg = '%r is not a supported currency. Current supported currencies are %r' % (value, currency_list)
+
+        if value not in currency_list:
+            raise colander.Invalid(node, error_msg)

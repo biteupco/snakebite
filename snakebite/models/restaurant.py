@@ -11,7 +11,7 @@ class Restaurant(mongo.DynamicDocument):
     geolocation = mongo.PointField()
     description = mongo.StringField()
     tags = mongo.ListField()
-    menus = mongo.SortedListField(mongo.EmbeddedDocumentField(Menu), ordering='rating')
+    menus = mongo.SortedListField(mongo.EmbeddedDocumentField('Menu'), ordering='rating')
 
     @property
     def location(self):
@@ -22,7 +22,8 @@ class Restaurant(mongo.DynamicDocument):
 
 
 class Menu(mongo.DynamicEmbeddedDocument):
-    price = mongo.FloatField(required=True)
+    name = mongo.StringField()
+    price = mongo.DecimalField(min_value=0, required=True)  # defaults to 2 dp, rounded up
     currency = mongo.StringField(required=True, default='JPY')
     rating = mongo.FloatField(min_value=0, max_value=5, default=0)  # current avg rating
     images = mongo.ListField(mongo.URLField())  # list of urls

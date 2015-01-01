@@ -4,7 +4,7 @@ from __future__ import absolute_import
 from falcon import testing
 import colander
 import mock
-from snakebite.helpers.schema import CommaList, CommaIntList
+from snakebite.helpers.schema import CommaList, CommaIntList, Currency
 
 dummy = mock.Mock()
 
@@ -49,3 +49,34 @@ class TestCommaIntList(testing.TestBase):
                 self.assertRaises(Exception, CommaIntList.is_int_list, dummy, t['list'])
             else:
                 self.assertIsNone(CommaIntList.is_int_list(dummy, t['list']))  # passes validation
+
+
+class TestCurrency(testing.TestBase):
+
+    def test_deserialize(self):
+        tests = [
+            {'cstruct': colander.null, 'expected': 'JPY'},
+            {'cstruct': '', 'expected': 'JPY'},
+            {'cstruct': 'SGD', 'expected': 'SGD'},
+            {'cstruct': 'SGD$$$', 'expected': 'SGD'}
+        ]
+        currency = Currency()
+        for test in tests:
+            result = currency.deserialize(dummy, test['cstruct'])
+            self.assertEqual(result, test['expected'])
+
+    def test_is_valid(self):
+        tests = [
+            {'value': colander.null, 'error': True},
+            {'value': 'JPY', 'error': False},
+            {'value': 'GBP', 'error': False},
+            {'value': 'SGD', 'error': False},
+            {'value': 'USD', 'error': False},
+            {'value': 'LAT', 'error': True},  # lats (old currency of Latvia, not supported!)
+        ]
+
+        for t in tests:
+            if t['error']:
+                self.assertRaises(Exception, Currency.is_valid, dummy, t['value'])
+            else:
+                self.assertIsNone(Currency.is_valid(dummy, t['value']))  # passes validation
