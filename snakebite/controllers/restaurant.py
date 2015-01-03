@@ -35,7 +35,17 @@ class Collection(object):
                 item_val = query_params.pop(item)
                 updated_params['{}__icontains'.format(item)] = item_val
 
-        # TODO: filter by geolocation
+        # skip updating query_params for filters on list fields like tags or menus.tags,
+        # since mongoengine filters directly by finding any Restaurant that has tags of that value
+        # e.g., GET /restaurants?tags=chicken returns all restaurants having 'chicken' tag
+
+        if 'geolocation' in query_params:
+            geolocation_val = query_params.pop('geolocation')
+            geolocation_val = map(float, geolocation_val.split(',')[:2])
+
+            updated_params['geolocation__near'] = geolocation_val
+            updated_params['geolocation__max_distance'] = 1000  # 1 km
+
         query_params.update(updated_params)
 
         restaurants = Restaurant.objects(**query_params)
