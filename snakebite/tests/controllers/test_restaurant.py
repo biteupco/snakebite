@@ -5,6 +5,7 @@ from falcon import testing
 from snakebite.tests import get_test_snakebite
 from snakebite.controllers import restaurant
 from snakebite.models.restaurant import Restaurant
+from snakebite.constants import TOKYO_GEOLOCATION
 import json
 
 
@@ -55,27 +56,74 @@ class TestRestaurantCollectionPost(testing.TestBase):
         self.api.add_route('/restaurants', self.resource)
         self.srmock = testing.StartResponseMock()
 
+    def get_mock_restaurant(self, **kwargs):
+        base_restaurant = {
+            "name": "KFC",
+            "address": "ueno",
+            "email": "kf@c.com",
+            "menus": [],
+            "geolocation": TOKYO_GEOLOCATION
+        }
+        base_restaurant.update(kwargs)
+        return base_restaurant
+
+    def get_mock_menu(self, **kwargs):
+        base_menu = {"name": "some menu", "price": 100.00, "currency": 'JPY', 'images': ['http://kfc.com/1.jpg']}
+        base_menu.update(kwargs)
+        return base_menu
+
     def tearDown(self):
         Restaurant.objects.delete()
 
     def test_collection_on_post(self):
 
+        restaurant1 = self.get_mock_restaurant(name="First Kitchen")  # with no menus (not good!)
+
+        restaurant2 = self.get_mock_restaurant()
+        menus2 = [self.get_mock_menu(name="menu A"), self.get_mock_menu(name="menu B")]
+        restaurant2.update({'menus': menus2})
+
         tests = [
             {
-                'data': '{"name": "KFC", "address": "ueno", "email": "kf@c.com"}',
-                'expected': {"name": "KFC", "address": "ueno", "description": "",
-                             "email": "kf@c.com", "tags": [], "geolocation": None}
+                'data': json.dumps(restaurant1),
+                'expected': {
+                    "name": "First Kitchen",
+                    "address": "ueno",
+                    "description": "",
+                    "geolocation": {'type': 'Point', 'coordinates': list(TOKYO_GEOLOCATION)},
+                    "email": "kf@c.com",
+                    "tags": [],
+                    "menus": []
+                }
             },
             {
-                'data': '{"name": "KFC", "address": "ueno", "tags": "a,b,c", "email": "kf@c.com"}',
-                'expected': {"name": "KFC", "address": "ueno", "description": "",
-                             "email": "kf@c.com", "tags": ["a", "b", "c"], "geolocation": None}
-            },
-            {
-                'data': '{"name": "KFC", "address": "ueno", "description": "KFC desu", '
-                        '"email": "kf@c.com", "tags": "a,b,c"}',
-                'expected': {"name": "KFC", "address": "ueno", "description": "KFC desu",
-                             "email": "kf@c.com", "tags": ["a", "b", "c"], "geolocation": None}
+                'data': json.dumps(restaurant2),
+                'expected': {
+                    "name": "KFC",
+                    "address": "ueno",
+                    "description": "",
+                    "geolocation": {'type': 'Point', 'coordinates': list(TOKYO_GEOLOCATION)},
+                    "email": "kf@c.com",
+                    "tags": [],
+                    "menus": [
+                        {
+                            "name": "menu A",
+                            "price": 100.00,
+                            "currency": "JPY",
+                            "tags": [],
+                            "images": ['http://kfc.com/1.jpg'],
+                            "rating": 0.0
+                        },
+                        {
+                            "name": "menu B",
+                            "price": 100.00,
+                            "currency": "JPY",
+                            "tags": [],
+                            "images": ['http://kfc.com/1.jpg'],
+                            "rating": 0.0
+                        }
+                    ]
+                }
             }
         ]
 

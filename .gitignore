@@ -15,5 +15,6 @@
 .idea/
 
 # log, pid, etc..
-log/
+logs/
 run/
+*.log
