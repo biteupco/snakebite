@@ -27,6 +27,17 @@ class Collection(object):
         res.status = falcon.HTTP_200
         query_params = req.params.get('query')
 
+        # update query filters
+        updated_params = {}
+
+        for item in ['name', 'description', 'menus.name']:
+            if item in query_params:
+                item_val = query_params.pop(item)
+                updated_params['{}__icontains'.format(item)] = item_val
+
+        # TODO: filter by geolocation
+        query_params.update(updated_params)
+
         restaurants = Restaurant.objects(**query_params)
         res.body = {'items': restaurants, 'count': len(restaurants)}
 
