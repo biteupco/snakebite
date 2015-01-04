@@ -6,6 +6,7 @@ import logging
 from snakebite.controllers.hooks import deserialize, serialize
 from snakebite.controllers.schema.restaurant import RestaurantSchema
 from snakebite.models.restaurant import Restaurant, Menu
+from snakebite.libs.error import HTTPBadRequest
 
 
 # -------- BEFORE_HOOK functions
@@ -27,7 +28,12 @@ class Collection(object):
         res.status = falcon.HTTP_200
         query_params = req.params.get('query')
 
-        # update query filters
+        # get pagination limits
+        start = int(query_params.pop('start', 0))
+        limit = int(query_params.pop('limit', 20))
+        end = start + limit
+
+        # temp dict for updating query filters
         updated_params = {}
 
         for item in ['name', 'description', 'menus.name']:
@@ -39,16 +45,33 @@ class Collection(object):
         # since mongoengine filters directly by finding any Restaurant that has tags of that value
         # e.g., GET /restaurants?tags=chicken returns all restaurants having 'chicken' tag
 
-        if 'geolocation' in query_params:
-            geolocation_val = query_params.pop('geolocation')
-            geolocation_val = map(float, geolocation_val.split(',')[:2])
+        try:
+            if 'geolocation' in query_params:
+                geolocation_val = query_params.pop('geolocation')
+                geolocation_val = map(float, geolocation_val.split(',')[:2])
 
-            updated_params['geolocation__near'] = geolocation_val
-            updated_params['geolocation__max_distance'] = 1000  # 1 km
+                # we deal with geolocation query in raw instead due to mongoengine bugs
+                # see https://github.com/MongoEngine/mongoengine/issues/795
+                # dated: 3/1/2015
 
-        query_params.update(updated_params)
+                updated_params['__raw__'] = {
+                    'geolocation': {
+                        '$near': {
+                            '$geometry': {
+                                'type': 'Point',
+                                'coordinates': geolocation_val
+                            },
+                            '$maxDistance': 1000  # within 1 km
+                        },
+                    }
+                }
 
-        restaurants = Restaurant.objects(**query_params)
+        except Exception:
+            raise HTTPBadRequest('Invalid Value', 'geolocation supplied is invalid: {}'.format(geolocation_val))
+
+        query_params.update(updated_params)  # update modified params for filtering
+
+        restaurants = Restaurant.objects(**query_params)[start:end]
         res.body = {'items': restaurants, 'count': len(restaurants)}
 
     @falcon.before(deserialize_create)

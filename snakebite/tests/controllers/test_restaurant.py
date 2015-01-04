@@ -6,6 +6,7 @@ from snakebite.tests import get_test_snakebite
 from snakebite.controllers import restaurant
 from snakebite.models.restaurant import Restaurant
 from snakebite.constants import TOKYO_GEOLOCATION
+from snakebite.libs.error import HTTPBadRequest
 import json
 
 
@@ -18,8 +19,10 @@ class TestRestaurantCollectionGet(testing.TestBase):
         self.api.add_route('/restaurants', self.resource)
         self.srmock = testing.StartResponseMock()
         self.restaurants = [
-            Restaurant(name='a', description='desc', email='a@b.com', address='tokyo'),
-            Restaurant(name='b', description='description', email='b@a.com', address='kyoto', tags=['b'])
+            Restaurant(name='a', description='desc', email='a@b.com',
+                       address='Asakusa, Taito-ku, Tokyo', tags=['x', 'y', 'z'], geolocation=[139.79843, 35.712074]),
+            Restaurant(name='b', description='description', email='b@a.com',
+                       address='Roppongi, Minato-ku, Tokyo', tags=['z'], geolocation=[139.731443, 35.662836])
         ]
         for r in self.restaurants:
             r.save()
@@ -30,10 +33,17 @@ class TestRestaurantCollectionGet(testing.TestBase):
     def test_collection_on_get(self):
 
         tests = [
-            {'query_string': '', 'expected': {"count": 2}},
-            {'query_string': 'description=description', 'expected': {"count": 1}},
-            {'query_string': 'name=c', 'expected': {"count": 0}},
-            {'query_string': 'email=b@a.com', 'expected': {"count": 1}}
+            {'query_string': '', 'expected': {"status": 200, "count": 2}},
+            {'query_string': 'description=desc', 'expected': {"status": 200, "count": 2}},
+            {'query_string': 'description=description', 'expected': {"status": 200, "count": 1}},
+            {'query_string': 'name=c', 'expected': {"status": 200, "count": 0}},
+            {'query_string': 'email=b@a.com', 'expected': {"status": 200, "count": 1}},
+            {'query_string': 'tags=z', 'expected': {"status": 200, "count": 2}},
+            {'query_string': 'tags=x', 'expected': {"status": 200, "count": 1}},
+            {'query_string': 'tags=x&name=a', 'expected': {"status": 200, "count": 1}},
+            {'query_string': 'tags=x&name=c', 'expected': {"status": 200, "count": 0}},
+            {'query_string': 'geolocation=139.731443,35.662836', 'expected': {"status": 200, "count": 1}},
+            {'query_string': 'geolocation=ab,cd', 'expected': {"status": 400}}
         ]
         for t in tests:
             res = self.simulate_request('/restaurants',
@@ -44,6 +54,13 @@ class TestRestaurantCollectionGet(testing.TestBase):
             self.assertTrue(isinstance(res, list))
             body = json.loads(res[0])
             self.assertTrue(isinstance(body, dict))
+
+            if t['expected']['status'] != 200:  # expected erroneous requests
+                self.assertNotIn('count', body.keys())
+                self.assertIn('title', body.keys())
+                self.assertIn('description', body.keys())
+                continue
+
             self.assertListEqual(["count", "items"], sorted(body.keys()))
             self.assertEqual(body['count'], t['expected']['count'], "{}".format(t['query_string']))
 
