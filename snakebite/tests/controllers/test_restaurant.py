@@ -6,7 +6,6 @@ from snakebite.tests import get_test_snakebite
 from snakebite.controllers import restaurant
 from snakebite.models.restaurant import Restaurant
 from snakebite.constants import TOKYO_GEOLOCATION
-from snakebite.libs.error import HTTPBadRequest
 import json
 
 
