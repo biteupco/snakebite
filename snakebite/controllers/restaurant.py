@@ -7,6 +7,7 @@ from snakebite.controllers.hooks import deserialize, serialize
 from snakebite.controllers.schema.restaurant import RestaurantSchema
 from snakebite.models.restaurant import Restaurant, Menu
 from snakebite.libs.error import HTTPBadRequest
+from mongoengine.errors import DoesNotExist, MultipleObjectsReturned
 
 
 # -------- BEFORE_HOOK functions
@@ -82,7 +83,6 @@ class Collection(object):
 
         # save to DB
         menu_data = data.pop('menus')  # extract info meant for menus
-
         restaurant = Restaurant(**data)
         restaurant.menus = [Menu(**menu) for menu in menu_data]
 
@@ -92,4 +92,23 @@ class Collection(object):
 
 
 class Item(object):
-    pass
+    def __init__(self):
+        pass
+
+    def _try_get_restaurant(self, id):
+        try:
+            return Restaurant.objects.get(id=id)
+        except (DoesNotExist, MultipleObjectsReturned) as e:
+            raise HTTPBadRequest(title='Invalid Value', description='Invalid ID provided. {}'.format(e.message))
+
+    @falcon.after(serialize)
+    def on_get(self, req, res, id):
+        restaurant = self._try_get_restaurant(id)
+        res.body = restaurant
+
+    @falcon.after(serialize)
+    def on_delete(self, req, res, id):
+        restaurant = self._try_get_restaurant(id)
+        restaurant.delete()
+
+    # TODO: handle PUT requests
