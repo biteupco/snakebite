@@ -29,6 +29,7 @@ class SnakeBite(object):
 
         # load routes
         self.app.add_route('/restaurants', restaurant.Collection())
+        self.app.add_route('/restaurants/{id}', restaurant.Item())
 
     def cors_middleware(self):
         """
