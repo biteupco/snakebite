@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
+import __builtin__
 import falcon
 import logging
 import os
@@ -53,10 +54,18 @@ class SnakeBite(object):
         db_config = self.config[db_section]  # map
 
         db_name = db_config.get('name')
-        port = int(db_config.get('port'))
-        host = db_config.get('host')
+
+        attr_map = {'host': 'str', 'port': 'int', 'username': 'str', 'password': 'str'}
+
+        kwargs = {}
+        for key, typ in attr_map.iteritems():
+            typecast_fn = getattr(__builtin__, typ)
+            # cast the value from db_config accordingly if key-value pair exists
+            kwargs[key] = typecast_fn(db_config.get(key)) if db_config.get(key) else None
+
         connection.disconnect('default')  # disconnect previous default connection if any
-        self.db = connection.connect(db_name, host=host, port=port)
+
+        self.db = connection.connect(db_name, **kwargs)
 
         logging.info('connected to Database: {}'.format(self.db))
 
