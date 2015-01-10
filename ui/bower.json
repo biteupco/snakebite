@@ -1,0 +1,27 @@
+{
+  "name": "snakebite-ui",
+  "version": "0.0.1",
+  "homepage": "https://github.com/wheresmybento/snakebite",
+  "authors": [
+    "Kelvin Tay <kelvintaywl@gmail.com>"
+  ],
+  "description": "ui client interface that shake hands with the Snakebite API server",
+  "main": "app.js",
+  "keywords": [
+    "ui",
+    "bootstrap",
+    "client"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.1"
+  }
+}
