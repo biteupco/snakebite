@@ -2,7 +2,8 @@ angular.module('restaurant', [
 
 ])
 .controller('restaurantListCtrl', ['$http', '$scope', 'SERVER_URL', function($http, $scope, serverURL){
-	$scope.restaurants = [
+	$scope.restaurants = [];
+	/*
 		{
 			id: 1,
 			name: 'KFC',
@@ -43,7 +44,7 @@ angular.module('restaurant', [
 			]
 		}
 	];
-
+	*/
 	var req = {
 		method: 'GET',
 		url: serverURL + '/restaurants',

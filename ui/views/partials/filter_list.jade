@@ -9,7 +9,7 @@
         .col-sm-3
           .form-group
             label= opt.label
-            input.form-control(type=opt.type, name=opt.name, value=opt.value)
+            input.form-control(type=opt.type, name=opt.name, value=opt.value, ng-model="search." + opt.name)
       - }
       </div>
     - }

@@ -19,7 +19,7 @@ block content
         th Menus
 
     tbody
-      tr(ng-repeat="restaurant in restaurants")
+      tr(ng-repeat="restaurant in restaurants | filter:search:strict")
         td
           a(href="#") {{ restaurant.id }}
         td {{ restaurant.name }}
