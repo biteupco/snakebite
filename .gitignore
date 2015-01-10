@@ -1,3 +1,5 @@
+# ---------- Python
+
 *.swp
 *.pyc
 *.egg
@@ -18,3 +20,19 @@
 logs/
 run/
 *.log
+
+# ------------ Node JS
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Grunt storage
+*.grunt
+
+# Compiled binary addons
+*build/Release
+
+*/node_modules
+*/bower_components
