@@ -9,7 +9,7 @@ block content
   // action list
   include ../partials/action_list.jade
 
-  table.table.table-hover
+  table.table.table-hover(ng-controller="restaurantListCtrl as restListCtrl")
     thead
       tr
         th ID
@@ -19,14 +19,12 @@ block content
         th Menus
 
     tbody
-      each index in [1,2,3,4,5]
-        tr
-          td
-            a(href="#")= index
-          td KFC
-          td 2-25-6 Asakusa, Taito-ku, Tokyo
-          td
-            span.label.label-info chicken
-            span.label.label-info fried
-          td
-            a(href="#") 2
+      tr(ng-repeat="restaurant in restaurants")
+        td
+          a(href="#") {{ restaurant.id }}
+        td {{ restaurant.name }}
+        td {{ restaurant.address }}
+        td
+          span.label.label-info(ng-repeat="tag in restaurant.tags") {{ tag }}
+        td
+          a(href="#") {{ restaurant.menus.length }}

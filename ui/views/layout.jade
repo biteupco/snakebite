@@ -1,5 +1,5 @@
 doctype html
-html
+html(ng-app="snakebite-ui")
   head
     title= title
     include ./partials/base_head.jade
@@ -11,9 +11,10 @@ html
         .col-md-2.col-sm-3
           ul.nav.nav-pills.nav-stacked
             li
-              a(href="#") Restaurants
+              a(href="/restaurants") Restaurants
 
         // main content
         .col-md-10.col-sm-9
           block content
     include ./partials/base_scripts.jade
+    block extra_scripts
