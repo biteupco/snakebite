@@ -8,3 +8,7 @@ body {
 a {
   color: #00B7FF;
 }
+
+#content {
+	margin-top: 20px;
+}

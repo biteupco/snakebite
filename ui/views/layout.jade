@@ -2,8 +2,18 @@ doctype html
 html
   head
     title= title
-    include ./includes/base_css.jade
+    include ./partials/base_head.jade
   body
-    include ./includes/base_navbar.html
-    block content
-    include ./includes/base_scripts.jade
+    include ./partials/base_navbar.jade
+    #content.container
+      .row
+        // sidebar
+        .col-md-2.col-sm-3
+          ul.nav.nav-pills.nav-stacked
+            li
+              a(href="#") Restaurants
+
+        // main content
+        .col-md-10.col-sm-9
+          block content
+    include ./partials/base_scripts.jade

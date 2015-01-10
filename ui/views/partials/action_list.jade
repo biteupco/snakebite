@@ -1,0 +1,8 @@
+.btn-group
+  button.btn.btn-default.dropdown-toggle(type="button", data-toggle="dropdown", aria-expanded="false") actions 
+    span.caret
+  
+  ul#action-menu.dropdown-menu(role="menu")
+    each link, action in action_map
+      li(role="presentation")
+        a(role="menuitem", tabindex="-1", href=link)= action

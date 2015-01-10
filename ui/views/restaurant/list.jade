@@ -1,0 +1,32 @@
+extends ../layout
+
+block content
+  h1= title
+  
+  // search filter
+  include ../partials/filter_list.jade
+
+  // action list
+  include ../partials/action_list.jade
+
+  table.table.table-hover
+    thead
+      tr
+        th ID
+        th Name
+        th Address
+        th Tags
+        th Menus
+
+    tbody
+      each index in [1,2,3,4,5]
+        tr
+          td
+            a(href="#")= index
+          td KFC
+          td 2-25-6 Asakusa, Taito-ku, Tokyo
+          td
+            span.label.label-info chicken
+            span.label.label-info fried
+          td
+            a(href="#") 2
