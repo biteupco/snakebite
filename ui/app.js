@@ -4,11 +4,18 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var fs = require('fs');
+
+var ENV = process.env.BENRI_ENV || 'dev';
+var filePath = __dirname + '/config/' + ENV + '.json';
 
 var routes = require('./routes/index');
 var restaurants = require('./routes/restaurant');
 
 var app = express();
+
+// set config from config file
+app.set('config', JSON.parse(fs.readFileSync(filePath)));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

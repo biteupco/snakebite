@@ -9,7 +9,7 @@ block content
   // action list
   include ../partials/action_list.jade
 
-  table.table.table-hover(ng-controller="restaurantListCtrl as restListCtrl")
+  table.table.table-hover
     thead
       tr
         th ID
@@ -19,12 +19,14 @@ block content
         th Menus
 
     tbody
-      tr(ng-repeat="restaurant in restaurants | filter:search:strict")
-        td
-          a(href="#") {{ restaurant.id }}
-        td {{ restaurant.name }}
-        td {{ restaurant.address }}
-        td
-          span.label.label-info(ng-repeat="tag in restaurant.tags") {{ tag }}
-        td
-          a(href="#") {{ restaurant.menus.length }}
+      each restaurant in restaurants
+        tr
+          td
+            a(href="/restaurants/" + restaurant._id.$oid)= restaurant._id.$oid
+          td= restaurant.name
+          td= restaurant.address
+          td
+            each tag in restaurant.tags
+              span.label.label-info= tag
+          td
+            a(href="/restaurants/" + restaurant._id.$oid)= restaurant.menus.length
