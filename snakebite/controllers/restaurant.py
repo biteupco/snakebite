@@ -50,6 +50,7 @@ class Collection(object):
             if 'geolocation' in query_params:
                 geolocation_val = query_params.pop('geolocation')
                 geolocation_val = map(float, geolocation_val.split(',')[:2])
+                max_distance = int(query_params.pop('maxDistance', 1000))  # defaulted to 1km
 
                 # we deal with geolocation query in raw instead due to mongoengine bugs
                 # see https://github.com/MongoEngine/mongoengine/issues/795
@@ -62,7 +63,7 @@ class Collection(object):
                                 'type': 'Point',
                                 'coordinates': geolocation_val
                             },
-                            '$maxDistance': 1000  # within 1 km
+                            '$maxDistance': max_distance
                         },
                     }
                 }
