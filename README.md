@@ -47,21 +47,16 @@ Before pushing codes, please ensure that the code is checked against flake8 firs
 $ python setup.py flake8
 ```
 
-Next, to check tests and coverage reports, do the following:
+Next, to check tests and coverage reports:
 
-```
-$ coverage run setup.py nosetests
-```
+1. Ensure MongoDB is running on your local machine. To start MongoDB: `$ sudo mongod`
+
+2. Run the tests by doing: `coverage run setup.py nosetests`
 
 Let's try to keep the code clean with Flake8, and less bug-free with testing!
-Target coverage: 80%
+Target coverage: 80% (current: 100%)
 
 ## DEPLOYING
 
 When deploying to environments other than your local environment ('dev'), please ensure that you set the 'BENRI_ENV' environment variable in the OS before running the server.
 This is so that the right config file can be loaded for initializing the application.
-
-
-## TODO
-
-1. Setup MongoDB and models
