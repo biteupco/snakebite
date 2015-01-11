@@ -51,7 +51,7 @@ Next, to check tests and coverage reports:
 
 1. Ensure MongoDB is running on your local machine. To start MongoDB: `$ sudo mongod`
 
-2. Run the tests by doing: `coverage run setup.py nosetests`
+2. Run the tests by doing: `$ coverage run setup.py nosetests`
 
 Let's try to keep the code clean with Flake8, and less bug-free with testing!
 Target coverage: 80% (current: 100%)
