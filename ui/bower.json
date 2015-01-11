@@ -12,7 +12,6 @@
     "bootstrap",
     "client"
   ],
-  "license": "MIT",
   "private": true,
   "ignore": [
     "**/.*",
@@ -22,6 +21,9 @@
     "tests"
   ],
   "dependencies": {
-    "bootstrap": "~3.3.1"
+    "bootstrap": "~3.3.1",
+    "angular": "~1.3.8",
+    "angular-loading-bar": "~0.6.0",
+    "angular-route": "~1.3.8"
   }
 }
