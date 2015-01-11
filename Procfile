@@ -1,1 +1,1 @@
-web: bash web.sh
+web: gunicorn manage:snakebite.app
