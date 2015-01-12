@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import
 import mongoengine as mongo
+from snakebite.constants import TWEET_CHAR_LENGTH
 
 
 class Restaurant(mongo.DynamicDocument):
@@ -9,7 +10,7 @@ class Restaurant(mongo.DynamicDocument):
     address = mongo.StringField(required=True)
     email = mongo.EmailField(required=True)
     geolocation = mongo.PointField()
-    description = mongo.StringField()
+    description = mongo.StringField(max_length=TWEET_CHAR_LENGTH)
     tags = mongo.ListField()
     menus = mongo.SortedListField(mongo.EmbeddedDocumentField('Menu'), ordering='rating')
 

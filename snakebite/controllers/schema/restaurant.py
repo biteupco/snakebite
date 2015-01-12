@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 import colander
 import decimal
+from snakebite.constants import TWEET_CHAR_LENGTH
 from snakebite.controllers.schema.common import Images, Geolocation
 from snakebite.helpers.schema import CommaList, Currency
 
@@ -23,7 +24,7 @@ class RestaurantSchema(colander.MappingSchema):
     name = colander.SchemaNode(colander.String())
     address = colander.SchemaNode(colander.String())
     email = colander.SchemaNode(colander.String(), validator=colander.Email(), missing='')
-    description = colander.SchemaNode(colander.String(), missing='')
+    description = colander.SchemaNode(colander.String(), missing='', validator=colander.Length(max=TWEET_CHAR_LENGTH))
     geolocation = Geolocation()
     tags = colander.SchemaNode(CommaList(), missing='')
     menus = Menus()
