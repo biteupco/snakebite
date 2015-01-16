@@ -33,7 +33,7 @@ block content
               if restaurant.geolocation && restaurant.geolocation.coordinates
                 - var lat = restaurant.geolocation.coordinates[1]
                 - var lng = restaurant.geolocation.coordinates[0]
-                a(href="https://www.google.co.jp/maps/@" + lat + "," + lng + ",14z?hl=en")= lat + "," + lng
+                a(href="https://www.maps.google.com/maps?q=loc:" + lat + "," + lng + "&z=19")= lat + "," + lng
 
           tr
             td
