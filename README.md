@@ -5,6 +5,22 @@ Snakebite is built with Python, and more specifically with Falcon framework and 
 
 To get started, please follow instructions below on how to setup your environment to run Snakebite
 
+## Prerequisite
+
+Linus (apt-get)
+
+python [setuptools](https://pypi.python.org/pypi/setuptools)
+```
+$ sudo apt-get install python-setuptools
+```
+
+python-dev 
+```
+$ sudo apt-get install python-dev
+```
+mongo-db [Ubuntu](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/)
+mongo-db [Debian](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-debian/)
+
 ## Instructions
 
 First, clone this repository onto your local machine
