@@ -7,7 +7,7 @@ To get started, please follow instructions below on how to setup your environmen
 
 ## Prerequisite
 
-Linus (apt-get)
+###Linux (apt-get)
 
 python [setuptools](https://pypi.python.org/pypi/setuptools)
 ```
@@ -18,8 +18,8 @@ python-dev
 ```
 $ sudo apt-get install python-dev
 ```
-mongo-db [Ubuntu](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/)
-mongo-db [Debian](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-debian/)
+mongo-db [Ubuntu](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/) --
+mongo-db [Debian](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-debian/) --
 
 ## Instructions
 
