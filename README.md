@@ -18,8 +18,24 @@ python-dev
 ```
 $ sudo apt-get install python-dev
 ```
-mongo-db [Ubuntu](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/) --
-mongo-db [Debian](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-debian/) --
+mongo-db [Ubuntu](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/) / [Debian](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-debian/)
+
+Import the public key used by the package management system.
+```
+$ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+```
+Create a list file for MongoDB.
+```
+$ echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list
+```
+Reload local package database.
+```
+$ sudo apt-get update
+```
+Install the MongoDB packages.
+```
+$ sudo apt-get install -y mongodb-org
+```
 
 ## Instructions
 
