@@ -53,7 +53,9 @@ $ python setup.py develop
 ```
 
 ## Up and Running
- Assuming you are already in the project directory, simply run the following command:
+
+Before running the application, we need to have our database up. Do `$sudo mongod`.
+Assuming you are already in the project directory, simply run the following command:
 
 ```
 $ gunicorn manage:snakebite.app
