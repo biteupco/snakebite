@@ -1,5 +1,5 @@
 # Snakebite  
-[![Build Status](https://travis-ci.org/wheresmybento/snakebite.svg?branch=master)](https://travis-ci.org/wheresmybento/snakebite)
+[![Build Status](https://travis-ci.org/gobbl/snakebite.svg?branch=master)](https://travis-ci.org/gobbl/snakebite)
 
 Snakebite is built with Python, and more specifically with Falcon framework and MongoEngine (python client for MongoDB).
 
