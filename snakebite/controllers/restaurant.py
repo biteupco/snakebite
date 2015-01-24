@@ -29,10 +29,14 @@ class Collection(object):
         res.status = falcon.HTTP_200
         query_params = req.params.get('query')
 
-        # get pagination limits
-        start = int(query_params.pop('start', 0))
-        limit = int(query_params.pop('limit', 20))
-        end = start + limit
+        try:
+            # get pagination limits
+            start = int(query_params.get('start', 0))
+            limit = int(query_params.get('limit', 20))
+            end = start + limit
+        except ValueError as e:
+            raise HTTPBadRequest(title='Invalid Value',
+                                 description='Invalid arguments in URL query:\n{}'.format(e.message))
 
         # temp dict for updating query filters
         updated_params = {}

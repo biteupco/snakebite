@@ -42,7 +42,9 @@ class TestRestaurantCollectionGet(testing.TestBase):
             {'query_string': 'tags=x&name=a', 'expected': {"status": 200, "count": 1}},
             {'query_string': 'tags=x&name=c', 'expected': {"status": 200, "count": 0}},
             {'query_string': 'geolocation=139.731443,35.662836', 'expected': {"status": 200, "count": 1}},
-            {'query_string': 'geolocation=ab,cd', 'expected': {"status": 400}}
+            {'query_string': 'geolocation=ab,cd', 'expected': {"status": 400}},
+            {'query_string': 'start=2&limit=1', 'expected': {"status": 200, "count": 0}},
+            {'query_string': 'start=1limit=1', 'expected': {"status": 400}}
         ]
         for t in tests:
             res = self.simulate_request('/restaurants',

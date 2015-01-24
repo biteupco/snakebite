@@ -7,7 +7,7 @@ import logging
 import os
 from mongoengine import connection
 from logging.handlers import TimedRotatingFileHandler
-from snakebite.controllers import restaurant
+from snakebite.controllers import restaurant, tag
 from snakebite.constants import DATETIME_FORMAT
 
 
@@ -31,6 +31,7 @@ class SnakeBite(object):
         # load routes
         self.app.add_route('/restaurants', restaurant.Collection())
         self.app.add_route('/restaurants/{id}', restaurant.Item())
+        self.app.add_route('/tags', tag.Collection())
 
     def cors_middleware(self):
         """
