@@ -31,5 +31,5 @@ class Collection(object):
                                  description='Invalid arguments in URL query:\n{}'.format(e.message))
 
         tag_freqs = Restaurant.objects.item_frequencies('tags', normalize=True)
-        tags = sorted(tag_freqs.items(), key=itemgetter(1), reverse=True)[start:end]
+        tags = sorted(tag_freqs.iteritems(), key=itemgetter(1), reverse=True)[start:end]
         res.body = {'items': tags, 'count': len(tags)}
