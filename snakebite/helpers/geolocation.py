@@ -24,7 +24,7 @@ def reformat_geolocations_map_to_list(dct, geolocation_attr_names):
     return dct
 
 
-def reformat_geolocations_point_field_to_map(dct, geolocation_attr_names):
+def reformat_geolocations_point_field_to_map(obj, geolocation_attr_names):
     """
     takes an object and updates the attributes listed in geolocation_attr_names from a PointField-like map
     and converts these attributes to a simpler {'lon', 'lat'} map instead.
@@ -38,14 +38,14 @@ def reformat_geolocations_point_field_to_map(dct, geolocation_attr_names):
 
     for attr_name in geolocation_attr_names:
 
-        geolocation_attr = getattr(dct, attr_name)
+        geolocation_attr = getattr(obj, attr_name)
 
         if _is_valid_geolocation_point_field(geolocation_attr):
             # update dct if geolocation_attr is a valid list of [lon, lat]
             lon, lat = geolocation_attr['coordinates']
-            setattr(dct, attr_name, {'lon': lon, 'lat': lat})  # list to map
+            setattr(obj, attr_name, {'lon': lon, 'lat': lat})  # list to map
 
-    return dct
+    return obj
 
 
 def _is_valid_geolocation_map(geolocation):
