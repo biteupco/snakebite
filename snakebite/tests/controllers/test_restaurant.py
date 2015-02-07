@@ -111,7 +111,7 @@ class TestRestaurantCollectionPost(testing.TestBase):
                     "name": "First Kitchen",
                     "address": "ueno",
                     "description": "",
-                    "geolocation": {'type': 'Point', 'coordinates': list(TOKYO_GEOLOCATION)},
+                    "geolocation": TOKYO_GEOLOCATION,
                     "email": "kf@c.com",
                     "tags": [],
                     "menus": []
@@ -123,7 +123,7 @@ class TestRestaurantCollectionPost(testing.TestBase):
                     "name": "KFC",
                     "address": "ueno",
                     "description": "",
-                    "geolocation": {'type': 'Point', 'coordinates': list(TOKYO_GEOLOCATION)},
+                    "geolocation": TOKYO_GEOLOCATION,
                     "email": "kf@c.com",
                     "tags": [],
                     "menus": [

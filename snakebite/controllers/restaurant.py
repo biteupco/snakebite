@@ -7,12 +7,14 @@ from snakebite.controllers.hooks import deserialize, serialize
 from snakebite.controllers.schema.restaurant import RestaurantSchema
 from snakebite.models.restaurant import Restaurant, Menu
 from snakebite.libs.error import HTTPBadRequest
+from snakebite.helpers.geolocation import reformat_geolocations_map_to_list, reformat_geolocations_point_field_to_map
 from mongoengine.errors import DoesNotExist, MultipleObjectsReturned
 
 
 # -------- BEFORE_HOOK functions
 def deserialize_create(req, res, resource):
-    return deserialize(req, res, resource, schema=RestaurantSchema())
+    deserialize(req, res, resource, schema=RestaurantSchema())
+    req.params['body'] = reformat_geolocations_map_to_list(req.params['body'], 'geolocation')
 
 # -------- END functions
 
@@ -79,6 +81,9 @@ class Collection(object):
         query_params.update(updated_params)  # update modified params for filtering
 
         restaurants = Restaurant.objects(**query_params)[start:end]
+        for r in restaurants:
+            reformat_geolocations_point_field_to_map(r, 'geolocation')
+
         res.body = {'items': restaurants, 'count': len(restaurants)}
 
     @falcon.before(deserialize_create)
@@ -89,12 +94,16 @@ class Collection(object):
 
         # save to DB
         menu_data = data.pop('menus')  # extract info meant for menus
+
         restaurant = Restaurant(**data)
         restaurant.menus = [Menu(**menu) for menu in menu_data]
 
         restaurant.save()
 
+        restaurant = Restaurant.objects.get(id=restaurant.id)
+
         res.body = restaurant
+        res.body = reformat_geolocations_point_field_to_map(res.body, 'geolocation')
 
 
 class Item(object):
@@ -110,7 +119,8 @@ class Item(object):
     @falcon.after(serialize)
     def on_get(self, req, res, id):
         restaurant = self._try_get_restaurant(id)
-        res.body = restaurant
+        res.body = reformat_geolocations_point_field_to_map(restaurant, 'geolocation')
+
 
     @falcon.after(serialize)
     def on_delete(self, req, res, id):
