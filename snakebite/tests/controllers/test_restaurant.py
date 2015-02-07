@@ -34,6 +34,8 @@ class TestRestaurantCollectionGet(testing.TestBase):
         tests = [
             {'query_string': '', 'expected': {"status": 200, "count": 2}},
             {'query_string': 'description=desc', 'expected': {"status": 200, "count": 2}},
+            {'query_string': 'description=desc&limit=1', 'expected': {"status": 200, "count": 1}},
+            {'query_string': 'description=desc&start=1&limit=2', 'expected': {"status": 200, "count": 1}},
             {'query_string': 'description=description', 'expected': {"status": 200, "count": 1}},
             {'query_string': 'name=c', 'expected': {"status": 200, "count": 0}},
             {'query_string': 'email=b@a.com', 'expected': {"status": 200, "count": 1}},
@@ -43,6 +45,7 @@ class TestRestaurantCollectionGet(testing.TestBase):
             {'query_string': 'tags=x&name=c', 'expected': {"status": 200, "count": 0}},
             {'query_string': 'geolocation=139.731443,35.662836', 'expected': {"status": 200, "count": 1}},
             {'query_string': 'geolocation=ab,cd', 'expected': {"status": 400}},
+            {'query_string': 'limit=1', 'expected': {"status": 200, "count": 1}},
             {'query_string': 'start=2&limit=1', 'expected': {"status": 200, "count": 0}},
             {'query_string': 'start=1limit=1', 'expected': {"status": 400}}
         ]
