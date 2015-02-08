@@ -5,7 +5,6 @@ from falcon import testing
 from snakebite.tests import get_test_snakebite
 from snakebite.controllers import status
 import json
-import mock
 
 
 class TestRestaurantCollectionGet(testing.TestBase):
