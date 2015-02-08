@@ -26,3 +26,10 @@ class HTTPNotAcceptable(falcon.HTTPNotAcceptable):
     status code: 406
     """
     pass
+
+class HTTPServiceUnavailable(falcon.HTTPServiceUnavailable):
+    """
+    wrapper for HTTP Service Unavailable response
+    status code: 503
+    """
+    pass
