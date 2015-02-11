@@ -23,9 +23,10 @@ class Restaurant(mongo.DynamicDocument):
 
 
 class Menu(mongo.DynamicEmbeddedDocument):
-    name = mongo.StringField()
+    name = mongo.StringField(unique=True)
     price = mongo.DecimalField(min_value=0, required=True)  # defaults to 2 dp, rounded up
     currency = mongo.StringField(required=True, default='JPY')
     rating = mongo.FloatField(min_value=0, max_value=5, default=0)  # current avg rating
     images = mongo.ListField(mongo.URLField())  # list of urls
     tags = mongo.ListField()
+    yums = mongo.IntField(min_value=0, default=0)

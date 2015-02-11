@@ -133,7 +133,8 @@ class TestRestaurantCollectionPost(testing.TestBase):
                             "currency": "JPY",
                             "tags": [],
                             "images": ['http://kfc.com/1.jpg'],
-                            "rating": 0.0
+                            "rating": 0.0,
+                            "yums": 0
                         },
                         {
                             "name": "menu B",
@@ -141,7 +142,8 @@ class TestRestaurantCollectionPost(testing.TestBase):
                             "currency": "JPY",
                             "tags": [],
                             "images": ['http://kfc.com/1.jpg'],
-                            "rating": 0.0
+                            "rating": 0.0,
+                            "yums": 0
                         }
                     ]
                 }
