@@ -4,9 +4,7 @@ from __future__ import absolute_import
 from falcon import testing
 from snakebite.tests import get_test_snakebite
 from snakebite.controllers import status
-from snakebite.libs.error import HTTPServiceUnavailable
 import json
-import mock
 
 
 class TestRestaurantCollectionGet(testing.TestBase):

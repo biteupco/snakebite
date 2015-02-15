@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
-from copy import deepcopy
 from falcon import testing
 from snakebite.tests import get_test_snakebite
 from snakebite.controllers import restaurant
