@@ -14,20 +14,12 @@ from mongoengine.errors import DoesNotExist, MultipleObjectsReturned, Validation
 # -------- BEFORE_HOOK functions
 def deserialize_create(req, res, resource):
     deserialize(req, res, resource, schema=RestaurantSchema())
-    print('BEFORE')
-    print(req.params['body'])
-    req.params['body'] = reformat_geolocations_map_to_list(req.params['body'], 'geolocation')
-    print('AFTER')
-    print(req.params['body'])
+    req.params['body'] = reformat_geolocations_map_to_list(req.params['body'], ['geolocation'])
 
 
 def deserialize_update(req, res, id, resource):
     deserialize(req, res, resource, schema=RestaurantSchema())
-    print('BEFORE')
-    print(req.params['body'])
-    req.params['body'] = reformat_geolocations_map_to_list(req.params['body'], 'geolocation')
-    print('AFTER')
-    print(req.params['body'])
+    req.params['body'] = reformat_geolocations_map_to_list(req.params['body'], ['geolocation'])
 
 # -------- END functions
 
@@ -153,5 +145,7 @@ class Item(object):
         restaurant.menus = [Menu(**menu) for menu in menu_data]
 
         restaurant.save()
+
+        restaurant = Restaurant.objects.get(id=id)
         res.body = restaurant
         res.body = reformat_geolocations_point_field_to_map(res.body, 'geolocation')

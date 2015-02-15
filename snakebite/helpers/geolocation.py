@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+from numbers import Number
 
 def reformat_geolocations_map_to_list(dct, geolocation_attr_names):
     """
@@ -29,12 +29,11 @@ def reformat_geolocations_point_field_to_map(obj, geolocation_attr_names):
     takes an object and updates the attributes listed in geolocation_attr_names from a PointField-like map
     and converts these attributes to a simpler {'lon', 'lat'} map instead.
     """
+    if type(geolocation_attr_names) not in [list, str]:
+        raise Exception('either a string of a list of string is required for attribute names')
 
     if type(geolocation_attr_names) is str:
         geolocation_attr_names = [geolocation_attr_names]
-
-    elif type(geolocation_attr_names) is not list:
-        raise Exception('either a string of a list of string is required for attribute names')
 
     for attr_name in geolocation_attr_names:
 
@@ -49,7 +48,9 @@ def reformat_geolocations_point_field_to_map(obj, geolocation_attr_names):
 
 
 def _is_valid_geolocation_map(geolocation):
-    return type(geolocation) is dict and geolocation.get('lon') and geolocation.get('lat')
+    if type(geolocation) is not dict:
+        return False
+    return isinstance(geolocation.get('lon'), Number) and isinstance(geolocation.get('lat'), Number)
 
 
 def _is_valid_geolocation_point_field(geolocation):

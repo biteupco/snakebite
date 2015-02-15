@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
+from copy import deepcopy
 from falcon import testing
 from snakebite.tests import get_test_snakebite
 from snakebite.controllers import restaurant
@@ -424,6 +425,9 @@ class TestRestaurantItemPut(testing.TestBase):
     def test_item_on_put(self):
 
         original_restaurant_json = self._get_restaurant_json()
+        edited_restaurant_json = json.loads(original_restaurant_json)
+        edited_restaurant_json.update({'name': 'Test Name'})
+        edited_restaurant_json = json.dumps(edited_restaurant_json)
 
         tests = [
             {
@@ -432,6 +436,14 @@ class TestRestaurantItemPut(testing.TestBase):
                 'expected': {
                     'status': 200,
                     'body': json.loads(original_restaurant_json)
+                }
+            },
+            {
+                'id': self.restaurant.id,
+                'data': edited_restaurant_json,
+                'expected': {
+                    'status': 200,
+                    'body': json.loads(edited_restaurant_json)
                 }
             },
             {
