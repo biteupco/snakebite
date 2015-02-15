@@ -13,6 +13,8 @@ class Role(object):
 
 
 class BaseUser(mongo.DynamicDocument):
+    meta = {'abstract': True}
+
     name = mongo.StringField(required=True)
     email = mongo.EmailField(required=True, primary_key=True)
 
