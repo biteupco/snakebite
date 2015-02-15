@@ -8,13 +8,18 @@ from snakebite.controllers.schema.restaurant import RestaurantSchema
 from snakebite.models.restaurant import Restaurant, Menu
 from snakebite.libs.error import HTTPBadRequest
 from snakebite.helpers.geolocation import reformat_geolocations_map_to_list, reformat_geolocations_point_field_to_map
-from mongoengine.errors import DoesNotExist, MultipleObjectsReturned
+from mongoengine.errors import DoesNotExist, MultipleObjectsReturned, ValidationError
 
 
 # -------- BEFORE_HOOK functions
 def deserialize_create(req, res, resource):
     deserialize(req, res, resource, schema=RestaurantSchema())
-    req.params['body'] = reformat_geolocations_map_to_list(req.params['body'], 'geolocation')
+    req.params['body'] = reformat_geolocations_map_to_list(req.params['body'], ['geolocation'])
+
+
+def deserialize_update(req, res, id, resource):
+    deserialize(req, res, resource, schema=RestaurantSchema())
+    req.params['body'] = reformat_geolocations_map_to_list(req.params['body'], ['geolocation'])
 
 # -------- END functions
 
@@ -28,7 +33,6 @@ class Collection(object):
     @falcon.before(deserialize)
     @falcon.after(serialize)
     def on_get(self, req, res):
-        res.status = falcon.HTTP_200
         query_params = req.params.get('query')
 
         try:
@@ -89,7 +93,6 @@ class Collection(object):
     @falcon.before(deserialize_create)
     @falcon.after(serialize)
     def on_post(self, req, res):
-        res.status = falcon.HTTP_200
         data = req.params.get('body')
 
         # save to DB
@@ -113,7 +116,7 @@ class Item(object):
     def _try_get_restaurant(self, id):
         try:
             return Restaurant.objects.get(id=id)
-        except (DoesNotExist, MultipleObjectsReturned) as e:
+        except (ValidationError, DoesNotExist, MultipleObjectsReturned) as e:
             raise HTTPBadRequest(title='Invalid Value', description='Invalid ID provided. {}'.format(e.message))
 
     @falcon.after(serialize)
@@ -128,3 +131,21 @@ class Item(object):
         restaurant.delete()
 
     # TODO: handle PUT requests
+    @falcon.before(deserialize_update)
+    @falcon.after(serialize)
+    def on_put(self, req, res, id):
+        restaurant = self._try_get_restaurant(id)
+        data = req.params.get('body')
+
+        # save to DB
+        menu_data = data.pop('menus')  # extract info meant for menus
+        for key, value in data.iteritems():
+            setattr(restaurant, key, value)
+
+        restaurant.menus = [Menu(**menu) for menu in menu_data]
+
+        restaurant.save()
+
+        restaurant = Restaurant.objects.get(id=id)
+        res.body = restaurant
+        res.body = reformat_geolocations_point_field_to_map(res.body, 'geolocation')

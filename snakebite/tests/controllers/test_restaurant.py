@@ -83,13 +83,20 @@ class TestRestaurantCollectionPost(testing.TestBase):
             "address": "ueno",
             "email": "kf@c.com",
             "menus": [],
+            "tags": [],
             "geolocation": TOKYO_GEOLOCATION
         }
         base_restaurant.update(kwargs)
         return base_restaurant
 
     def get_mock_menu(self, **kwargs):
-        base_menu = {"name": "some menu", "price": 100.00, "currency": 'JPY', 'images': ['http://kfc.com/1.jpg']}
+        base_menu = {
+            "name": "some menu",
+            "price": 100.00,
+            "currency": 'JPY',
+            "images": ["http://kfc.com/1.jpg"],
+            "tags": []
+        }
         base_menu.update(kwargs)
         return base_menu
 
@@ -374,3 +381,92 @@ class TestRestaurantItemDelete(testing.TestBase):
 
             else:
                 self.assertIsNone(body)
+
+
+class TestRestaurantItemPut(testing.TestBase):
+
+    def setUp(self):
+        self.resource = restaurant.Item()
+        self.api = get_test_snakebite().app
+
+        self.api.add_route('/restaurants/{id}', self.resource)
+        self.srmock = testing.StartResponseMock()
+        self.restaurant = None
+        rst = Restaurant(
+            name='a',
+            description='desc',
+            email='a@b.com',
+            address='Asakusa, Taito-ku, Tokyo',
+            tags=['x', 'y', 'z'],
+            geolocation=[139.79843, 35.712074],
+            menus=[
+                Menu(
+                    name='menu1',
+                    price=100.00,
+                    currency='JPY',
+                    images=[],
+                    tags=['a', 'b']
+                )
+            ]
+        )
+
+        self.restaurant = rst.save()
+
+    def tearDown(self):
+        Restaurant.objects.delete()
+
+    def _get_restaurant_json(self):
+        res = self.simulate_request('/restaurants/{}'.format(self.restaurant.id),
+                                    method="GET",
+                                    headers={'Content-Type': 'application/json'})
+        return res[0]
+
+    def test_item_on_put(self):
+
+        original_restaurant_json = self._get_restaurant_json()
+        edited_restaurant_json = json.loads(original_restaurant_json)
+        edited_restaurant_json.update({'name': 'Test Name'})
+        edited_restaurant_json = json.dumps(edited_restaurant_json)
+
+        tests = [
+            {
+                'id': self.restaurant.id,
+                'data': original_restaurant_json,
+                'expected': {
+                    'status': 200,
+                    'body': json.loads(original_restaurant_json)
+                }
+            },
+            {
+                'id': self.restaurant.id,
+                'data': edited_restaurant_json,
+                'expected': {
+                    'status': 200,
+                    'body': json.loads(edited_restaurant_json)
+                }
+            },
+            {
+                'id': "randomID",
+                'data': original_restaurant_json,
+                'expected': {
+                    'status': 400
+                }
+            }
+        ]
+
+        for t in tests:
+            res = self.simulate_request('/restaurants/{}'.format(t['id']),
+                                        body=t['data'],
+                                        method='PUT',
+                                        headers={'Content-Type': 'application/json'})
+
+            self.assertTrue(isinstance(res, list))
+            body = json.loads(res[0])
+            self.assertTrue(isinstance(body, dict))
+
+            if t['expected']['status'] != 200:
+                self.assertIn('title', body.keys())
+                self.assertIn('description', body.keys())  # error
+
+            else:
+                self.assertDictEqual(t['expected']['body'], body)

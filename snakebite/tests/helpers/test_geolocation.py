@@ -48,6 +48,16 @@ class TestGeolocation(testing.TestBase):
                 'attrs': 1234567,
                 'okay': False
             },
+            {
+                'dct': {
+                    'geolocation': {'lon': 12, 'lat': 23},
+                },
+                'attrs': 'locality',  # we did not select right attributes to reformat
+                'okay': True,
+                'expected': {
+                    'geolocation': {'lon': 12, 'lat': 23}
+                }
+            },
         ]
 
         for t in tests:

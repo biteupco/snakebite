@@ -4,8 +4,8 @@ from __future__ import absolute_import
 import colander
 import decimal
 from snakebite.constants import TWEET_CHAR_LENGTH
-from snakebite.controllers.schema.common import Images, Geolocation
-from snakebite.helpers.schema import CommaList, Currency
+from snakebite.controllers.schema.common import Images, Tags, Geolocation
+from snakebite.helpers.schema import Currency
 
 
 class MenuSchema(colander.MappingSchema):
@@ -13,7 +13,7 @@ class MenuSchema(colander.MappingSchema):
     price = colander.SchemaNode(colander.Decimal(quant='1.00', rounding=decimal.ROUND_UP))  # 2dp, rounded up
     currency = colander.SchemaNode(Currency(), validator=Currency.is_valid, missing='JPY')
     images = Images()
-    tags = colander.SchemaNode(CommaList(), missing='')
+    tags = Tags()
 
 
 class Menus(colander.SequenceSchema):
@@ -26,5 +26,5 @@ class RestaurantSchema(colander.MappingSchema):
     email = colander.SchemaNode(colander.String(), validator=colander.Email(), missing='')
     description = colander.SchemaNode(colander.String(), missing='', validator=colander.Length(max=TWEET_CHAR_LENGTH))
     geolocation = Geolocation()
-    tags = colander.SchemaNode(CommaList(), missing='')
+    tags = Tags()
     menus = Menus()
