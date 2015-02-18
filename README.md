@@ -67,11 +67,15 @@ Try adding params in your URL, for instance, http://localhost:8000/restaurants?l
 To try a POST request, you can do the following via the Terminal:
 
 ```
-$ curl -X  POST -H "Content-Type:application/json" -d '{"name": "yoshinoya", "location": "tsukiji"}' http://localhost:8000/restaurants
+$ curl -X  POST -H "Content-Type:application/json" -d '[PAYLOAD HERE]' http://localhost:8000/restaurants
 ```
+
+If you wish to see the response in prettyprint, you can pipe the response with Python's json module: `| python -m json.tool`
 
 Of course, you may prefer to use POSTMAN.io (easy GUI) to make these POST request. That is fine too.
 Do note that Snakebite only accepts json [content-type](http://en.wikipedia.org/wiki/Internet_media_type) for POST requests.
+
+To see the current implemented endpoints, hop over to the [wiki page](https://github.com/gobbl/snakebite/wiki/API-Endpoints)
 
 ## Testing & Contributing
 
