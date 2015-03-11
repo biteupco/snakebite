@@ -39,13 +39,17 @@ class SnakeBite(object):
         :return: a middleware function to deal with Cross Origin Resource Sharing (CORS)
         """
         def fn(req, res, params):
-            allowed_origins = self.config['cors']['allowed_origins'].split(',')
-            allowed_headers = self.config['cors']['allowed_headers'].split(',')
+            config = self.config['cors']
+            allowed_origins = config['allowed_origins'].split(',')
+            allowed_headers = config['allowed_headers']
+            allowed_methods = config['allowed_methods']
 
             origin = req.get_header('Origin')
             header = {'Access-Control-Allow-Headers': allowed_headers}
             if origin in allowed_origins:
                 header['Access-Control-Allow-Origin'] = origin
+            header['Access-Control-Allow-Methods'] = allowed_methods
+            header['Allow'] = allowed_methods
             res.set_headers(header)
 
         return fn
