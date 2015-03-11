@@ -40,7 +40,8 @@ class TestMiddlewares(testing.TestBase):
         def _prepare():
             mock_cors_dict = {
                 'allowed_origins': 'http://benri.com:5000,http://google.com',
-                'allowed_headers': 'Content-Type'
+                'allowed_headers': 'Content-Type',
+                'allowed_methods': 'GET,PUT,POST,DELETE,OPTIONS'
             }
 
             snakebite = get_test_snakebite()
