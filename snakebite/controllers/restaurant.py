@@ -8,6 +8,7 @@ from snakebite.controllers.schema.restaurant import RestaurantSchema
 from snakebite.models.restaurant import Restaurant, Menu
 from snakebite.libs.error import HTTPBadRequest
 from snakebite.helpers.geolocation import reformat_geolocations_map_to_list, reformat_geolocations_point_field_to_map
+from snakebite.helpers.range import min_max
 from mongoengine.errors import DoesNotExist, MultipleObjectsReturned, ValidationError
 
 
@@ -45,6 +46,7 @@ class Collection(object):
             raise HTTPBadRequest(title='Invalid Value',
                                  description='Invalid arguments in URL query:\n{}'.format(e.message))
 
+        # custom filters
         # temp dict for updating query filters
         updated_params = {}
 
@@ -81,6 +83,12 @@ class Collection(object):
 
         except Exception:
             raise HTTPBadRequest('Invalid Value', 'geolocation supplied is invalid: {}'.format(geolocation_val))
+
+        if 'price' in query_params:
+            price_range = query_params.pop('price')
+            price_min, price_max = min_max(price_range, type='float')
+            updated_params['menus.price__gte'] = price_min
+            updated_params['menus.price__lte'] = price_max
 
         query_params.update(updated_params)  # update modified params for filtering
 

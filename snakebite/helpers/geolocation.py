@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from numbers import Number
 
+
 def reformat_geolocations_map_to_list(dct, geolocation_attr_names):
     """
     takes a map object (dct) and updates the attributes listed in geolocation_attr_names from a map of {'lon', 'lat'}
