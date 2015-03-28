@@ -19,9 +19,11 @@ class TestRestaurantCollectionGet(testing.TestBase):
         self.srmock = testing.StartResponseMock()
         self.restaurants = [
             Restaurant(name='a', description='desc', email='a@b.com',
-                       address='Asakusa, Taito-ku, Tokyo', tags=['x', 'y', 'z'], geolocation=[139.79843, 35.712074]),
+                       address='Asakusa, Taito-ku, Tokyo', tags=['x', 'y', 'z'], geolocation=[139.79843, 35.712074],
+                       menus=[Menu(name='menu1', price=1000.00, currency='JPY', images=[], tags=['a', 'b'])]),
             Restaurant(name='b', description='description', email='b@a.com',
-                       address='Roppongi, Minato-ku, Tokyo', tags=['z'], geolocation=[139.731443, 35.662836])
+                       address='Roppongi, Minato-ku, Tokyo', tags=['z'], geolocation=[139.731443, 35.662836],
+                       menus=[Menu(name='menuA', price=400.00, currency='JPY', images=[], tags=['a', 'b'])])
         ]
         for r in self.restaurants:
             r.save()
@@ -47,6 +49,9 @@ class TestRestaurantCollectionGet(testing.TestBase):
             {'query_string': 'geolocation=ab,cd', 'expected': {"status": 400}},
             {'query_string': 'limit=1', 'expected': {"status": 200, "count": 1}},
             {'query_string': 'start=2&limit=1', 'expected': {"status": 200, "count": 0}},
+            {'query_string': 'price=100,', 'expected': {"status": 200, "count": 2}},
+            {'query_string': 'price=100,400', 'expected': {"status": 200, "count": 1}},
+            {'query_string': 'price=800,1200', 'expected': {"status": 200, "count": 1}},
             {'query_string': 'start=1limit=1', 'expected': {"status": 400}}
         ]
         for t in tests:
