@@ -95,14 +95,16 @@ class Collection(object):
             updated_params['price__gte'] = price_min
             updated_params['price__lte'] = price_max
 
-        query_params.update(updated_params)  # update modified params for filtering
-
-        menus = Menu.objects(**query_params)
         if restaurants:
-            restaurant_ids = {r.id: True for r in restaurants}
-            menus = [menu for menu in menus if restaurant_ids.get(menu.restaurant.id)]
+            # we found nearby restaurants, filter menus further to menus from these restaurants only
+            updated_params['__raw__'] = {
+                "restaurant.$id": {
+                    "$in": [r.id for r in restaurants]
+                }
+            }
 
-        menus = menus[start:end]
+        query_params.update(updated_params)  # update modified params for filtering
+        menus = Menu.objects(**query_params)[start:end]
 
         res.body = {'items': menus, 'count': len(menus)}
 
