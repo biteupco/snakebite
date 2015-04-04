@@ -16,6 +16,10 @@ class MenuSchema(colander.MappingSchema):
     tags = Tags()
 
 
+class MenuCreateSchema(MenuSchema):
+    restaurant_id = colander.Schema(colander.String())
+
+
 class Menus(colander.SequenceSchema):
     menu = MenuSchema()
 

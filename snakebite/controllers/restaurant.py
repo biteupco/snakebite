@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 import falcon
 import logging
+from snakebite import constants
 from snakebite.controllers.hooks import deserialize, serialize
 from snakebite.controllers.schema.restaurant import RestaurantSchema, RestaurantCreateSchema
 from snakebite.models.restaurant import Restaurant, Menu
@@ -38,7 +39,7 @@ class Collection(object):
         try:
             # get pagination limits
             start = int(query_params.pop('start', 0))
-            limit = int(query_params.pop('limit', 20))
+            limit = int(query_params.pop('limit', constants.PAGE_LIMIT))
             end = start + limit
 
         except ValueError as e:
@@ -53,15 +54,11 @@ class Collection(object):
                 item_val = query_params.pop(item)
                 updated_params['{}__icontains'.format(item)] = item_val
 
-        # skip updating query_params for filters on list fields like tags or menus.tags,
-        # since mongoengine filters directly by finding any Restaurant that has tags of that value
-        # e.g., GET /restaurants?tags=chicken returns all restaurants having 'chicken' tag
-
         try:
             if 'geolocation' in query_params:
                 geolocation_val = query_params.pop('geolocation')
                 geolocation_val = map(float, geolocation_val.split(',')[:2])
-                max_distance = int(query_params.pop('maxDistance', 1000))  # defaulted to 1km
+                max_distance = int(query_params.pop('maxDistance', constants.MAX_DISTANCE_SEARCH))
 
                 # we deal with geolocation query in raw instead due to mongoengine bugs
                 # see https://github.com/MongoEngine/mongoengine/issues/795
