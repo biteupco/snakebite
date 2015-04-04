@@ -5,7 +5,7 @@ import falcon
 import logging
 from operator import itemgetter
 from snakebite.controllers.hooks import deserialize, serialize
-from snakebite.models.restaurant import Restaurant
+from snakebite.models.restaurant import Menu
 from snakebite.libs.error import HTTPBadRequest
 
 logger = logging.getLogger(__name__)
@@ -30,6 +30,6 @@ class Collection(object):
             raise HTTPBadRequest(title='Invalid Value',
                                  description='Invalid arguments in URL query:\n{}'.format(e.message))
 
-        tag_freqs = Restaurant.objects.item_frequencies('tags', normalize=True)
+        tag_freqs = Menu.objects.item_frequencies('tags', normalize=True)
         tags = sorted(tag_freqs.iteritems(), key=itemgetter(1), reverse=True)[start:end]
         res.body = {'items': tags, 'count': len(tags)}

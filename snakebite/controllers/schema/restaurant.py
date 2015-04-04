@@ -26,5 +26,7 @@ class RestaurantSchema(colander.MappingSchema):
     email = colander.SchemaNode(colander.String(), validator=colander.Email(), missing='')
     description = colander.SchemaNode(colander.String(), missing='', validator=colander.Length(max=TWEET_CHAR_LENGTH))
     geolocation = Geolocation()
-    tags = Tags()
+
+
+class RestaurantCreateSchema(RestaurantSchema):
     menus = Menus()

@@ -4,17 +4,16 @@ from __future__ import absolute_import
 import falcon
 import logging
 from snakebite.controllers.hooks import deserialize, serialize
-from snakebite.controllers.schema.restaurant import RestaurantSchema
+from snakebite.controllers.schema.restaurant import RestaurantSchema, RestaurantCreateSchema
 from snakebite.models.restaurant import Restaurant, Menu
 from snakebite.libs.error import HTTPBadRequest
 from snakebite.helpers.geolocation import reformat_geolocations_map_to_list, reformat_geolocations_point_field_to_map
-from snakebite.helpers.range import min_max
 from mongoengine.errors import DoesNotExist, MultipleObjectsReturned, ValidationError
 
 
 # -------- BEFORE_HOOK functions
 def deserialize_create(req, res, resource):
-    deserialize(req, res, resource, schema=RestaurantSchema())
+    deserialize(req, res, resource, schema=RestaurantCreateSchema())
     req.params['body'] = reformat_geolocations_map_to_list(req.params['body'], ['geolocation'])
 
 
@@ -45,12 +44,11 @@ class Collection(object):
         except ValueError as e:
             raise HTTPBadRequest(title='Invalid Value',
                                  description='Invalid arguments in URL query:\n{}'.format(e.message))
-
         # custom filters
         # temp dict for updating query filters
         updated_params = {}
 
-        for item in ['name', 'description', 'menus.name']:
+        for item in ['name', 'description']:
             if item in query_params:
                 item_val = query_params.pop(item)
                 updated_params['{}__icontains'.format(item)] = item_val
@@ -84,12 +82,6 @@ class Collection(object):
         except Exception:
             raise HTTPBadRequest('Invalid Value', 'geolocation supplied is invalid: {}'.format(geolocation_val))
 
-        if 'price' in query_params:
-            price_range = query_params.pop('price')
-            price_min, price_max = min_max(price_range, type='float')
-            updated_params['menus.price__gte'] = price_min
-            updated_params['menus.price__lte'] = price_max
-
         query_params.update(updated_params)  # update modified params for filtering
 
         restaurants = Restaurant.objects(**query_params)[start:end]
@@ -98,21 +90,26 @@ class Collection(object):
 
         res.body = {'items': restaurants, 'count': len(restaurants)}
 
+
     @falcon.before(deserialize_create)
     @falcon.after(serialize)
     def on_post(self, req, res):
-        data = req.params.get('body')
+        # save restaurants, and menus (if any)
+        data = req.params.get('body')  # restaurant data
+        menu_data = data.pop('menus')
 
         # save to DB
-        menu_data = data.pop('menus')  # extract info meant for menus
-
         restaurant = Restaurant(**data)
-        restaurant.menus = [Menu(**menu) for menu in menu_data]
-
         restaurant.save()
+        menus = []
+        for mdata in menu_data:
+          mdata.update({'restaurant': restaurant})
+          menus.append(Menu(**mdata))  # extract info meant for menus
 
+        Menu.objects.insert(menus)
+
+        # return Restaurant (no menus)
         restaurant = Restaurant.objects.get(id=restaurant.id)
-
         res.body = restaurant
         res.body = reformat_geolocations_point_field_to_map(res.body, 'geolocation')
 
@@ -146,12 +143,8 @@ class Item(object):
         data = req.params.get('body')
 
         # save to DB
-        menu_data = data.pop('menus')  # extract info meant for menus
         for key, value in data.iteritems():
             setattr(restaurant, key, value)
-
-        restaurant.menus = [Menu(**menu) for menu in menu_data]
-
         restaurant.save()
 
         restaurant = Restaurant.objects.get(id=id)
