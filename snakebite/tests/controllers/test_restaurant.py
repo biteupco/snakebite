@@ -4,7 +4,7 @@ from __future__ import absolute_import
 from falcon import testing
 from snakebite.tests import get_test_snakebite
 from snakebite.controllers import restaurant
-from snakebite.models.restaurant import Restaurant, Menu
+from snakebite.models.restaurant import Restaurant
 from snakebite.constants import TOKYO_GEOLOCATION
 import json
 
