@@ -6,7 +6,7 @@ from snakebite.constants import TWEET_CHAR_LENGTH
 
 
 class Menu(mongo.DynamicDocument):
-    name = mongo.StringField()
+    name = mongo.StringField(required=True)
     price = mongo.DecimalField(min_value=0, required=True)  # defaults to 2 dp, rounded up
     currency = mongo.StringField(required=True, default='JPY')
     rating = mongo.FloatField(min_value=0, max_value=5, default=0)  # current avg rating

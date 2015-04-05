@@ -41,7 +41,6 @@ class Collection(object):
 
         user = User.objects.get(id=user_id)
         updated_params = {'__raw__': {'user.$id': user.id}}
-        print (updated_params)
 
         ratings = MenuRating.objects(**updated_params)[start:end]
         res.body = {'items': ratings, 'count': len(ratings)}

@@ -47,8 +47,10 @@ class Collection(object):
 
         # for convenience, we allow users to search for menus by their restaurant's geolocation too
         restaurants = list()
+        search_via_geolocation = False
         try:
             if 'geolocation' in query_params:
+                search_via_geolocation = True
                 geolocation_val = query_params.pop('geolocation')
                 geolocation_val = map(float, geolocation_val.split(',')[:2])
                 max_distance = int(query_params.pop('maxDistance', constants.MAX_DISTANCE_SEARCH))
@@ -57,7 +59,7 @@ class Collection(object):
                 # see https://github.com/MongoEngine/mongoengine/issues/795
                 # dated: 3/1/2015
 
-                restuarant_query_params = {
+                restaurant_query_params = {
                     '__raw__': {
                         'geolocation': {
                             '$near': {
@@ -71,7 +73,7 @@ class Collection(object):
                     }
                 }
                 # return list of restaurants satisfying geolocation requirements
-                restaurants = Restaurant.objects(**restuarant_query_params)
+                restaurants = Restaurant.objects(**restaurant_query_params)
 
         except Exception:
             raise HTTPBadRequest('Invalid Value', 'geolocation supplied is invalid: {}'.format(geolocation_val))
@@ -96,7 +98,7 @@ class Collection(object):
                 updated_params['{}__gte'.format(item)] = r_min
                 updated_params['{}__lte'.format(item)] = r_max
 
-        if restaurants:
+        if search_via_geolocation:
             # we found nearby restaurants, filter menus further to menus from these restaurants only
             updated_params['__raw__'] = {
                 "restaurant.$id": {
