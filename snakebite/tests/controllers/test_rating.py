@@ -71,7 +71,7 @@ class TestRatingCollectionGet(testing.TestBase):
                 self.assertIn('description', body.keys())
                 continue
 
-            self.assertListEqual(["count", "items"], sorted(body.keys()))
+            self.assertItemsEqual(["count", "items"], body.keys())
             want = t['expected']['count']
             got = body['count']
             self.assertEqual(got, want, "{}| got: {}, want: {}".format(t['query_string'], got, want))

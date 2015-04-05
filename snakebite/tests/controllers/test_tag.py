@@ -53,7 +53,7 @@ class TestRestaurantCollectionGet(testing.TestBase):
                 self.assertIn('description', body.keys())
                 continue
 
-            self.assertListEqual(["count", "items"], sorted(body.keys()))
+            self.assertItemsEqual(["count", "items"], body.keys())
             self.assertEqual(body['count'], t['expected']['count'])
             result_tags = [tag[0] for tag in body['items']]
-            self.assertListEqual(result_tags, t['expected']['tags'])
+            self.assertItemsEqual(result_tags, t['expected']['tags'])
