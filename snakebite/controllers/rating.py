@@ -6,6 +6,7 @@ from snakebite import constants
 from snakebite.controllers.hooks import deserialize, serialize
 from snakebite.models.restaurant import Menu
 from snakebite.models.rating import MenuRating
+from snakebite.models.user import User
 from snakebite.libs.error import HTTPBadRequest
 from mongoengine.errors import DoesNotExist, MultipleObjectsReturned, ValidationError
 
@@ -33,12 +34,14 @@ class Collection(object):
             raise HTTPBadRequest(title='Invalid Value',
                                  description='Invalid arguments in URL query:\n{}'.format(e.message))
 
-        user_id = query_params.pop('user_id')
+        user_id = query_params.pop('user_id', None)
         if not user_id:
             raise HTTPBadRequest(title='Invalid Request',
                                  description='Please supply a user ID in the query params')
 
-        updated_params = {'__raw__': {'user.$id': user_id}}
+        user = User.objects.get(id=user_id)
+        updated_params = {'__raw__': {'user.$id': user.id}}
+        print (updated_params)
 
         ratings = MenuRating.objects(**updated_params)[start:end]
         res.body = {'items': ratings, 'count': len(ratings)}
