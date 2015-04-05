@@ -45,12 +45,29 @@ class Collection(object):
             raise HTTPBadRequest(title='Invalid Value',
                                  description='Invalid arguments in URL query:\n{}'.format(e.message))
 
+        # custom filters
+        # temp dict for updating query filters
+        updated_params = {}
+
+        for item in ['name']:
+            if item in query_params:
+                item_val = query_params.pop(item)
+                updated_params['{}__icontains'.format(item)] = item_val
+
+        # skip updating query_params for filters on list fields like tags,
+        # since mongoengine filters directly by finding any Menu that has tags of that value
+        # e.g., GET /menu?tags=chicken returns all restaurants having 'chicken' tag
+
+        for item in ['price', 'rating']:
+            if item in query_params:
+                range = query_params.pop(item)
+                r_min, r_max = min_max(range, type='float')
+                updated_params['{}__gte'.format(item)] = r_min
+                updated_params['{}__lte'.format(item)] = r_max
+
         # for convenience, we allow users to search for menus by their restaurant's geolocation too
-        restaurants = list()
-        search_via_geolocation = False
-        try:
-            if 'geolocation' in query_params:
-                search_via_geolocation = True
+        if 'geolocation' in query_params:
+            try:
                 geolocation_val = query_params.pop('geolocation')
                 geolocation_val = map(float, geolocation_val.split(',')[:2])
                 max_distance = int(query_params.pop('maxDistance', constants.MAX_DISTANCE_SEARCH))
@@ -75,36 +92,15 @@ class Collection(object):
                 # return list of restaurants satisfying geolocation requirements
                 restaurants = Restaurant.objects(**restaurant_query_params)
 
-        except Exception:
-            raise HTTPBadRequest('Invalid Value', 'geolocation supplied is invalid: {}'.format(geolocation_val))
-
-        # custom filters
-        # temp dict for updating query filters
-        updated_params = {}
-
-        for item in ['name']:
-            if item in query_params:
-                item_val = query_params.pop(item)
-                updated_params['{}__icontains'.format(item)] = item_val
-
-        # skip updating query_params for filters on list fields like tags,
-        # since mongoengine filters directly by finding any Menu that has tags of that value
-        # e.g., GET /menu?tags=chicken returns all restaurants having 'chicken' tag
-
-        for item in ['price', 'rating']:
-            if item in query_params:
-                range = query_params.pop(item)
-                r_min, r_max = min_max(range, type='float')
-                updated_params['{}__gte'.format(item)] = r_min
-                updated_params['{}__lte'.format(item)] = r_max
-
-        if search_via_geolocation:
-            # we found nearby restaurants, filter menus further to menus from these restaurants only
-            updated_params['__raw__'] = {
-                "restaurant.$id": {
-                    "$in": [r.id for r in restaurants]
+                # we found nearby restaurants, filter menus further to menus from these restaurants only
+                updated_params['__raw__'] = {
+                    "restaurant.$id": {
+                        "$in": [r.id for r in restaurants]
+                    }
                 }
-            }
+
+            except Exception:
+                raise HTTPBadRequest('Invalid Value', 'geolocation supplied is invalid: {}'.format(geolocation_val))
 
         query_params.update(updated_params)  # update modified params for filtering
         menus = Menu.objects(**query_params)[start:end]
