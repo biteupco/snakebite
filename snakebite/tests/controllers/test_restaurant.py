@@ -4,7 +4,7 @@ from __future__ import absolute_import
 from falcon import testing
 from snakebite.tests import get_test_snakebite
 from snakebite.controllers import restaurant
-from snakebite.models.restaurant import Restaurant, Menu
+from snakebite.models.restaurant import Restaurant
 from snakebite.constants import TOKYO_GEOLOCATION
 import json
 
@@ -19,11 +19,9 @@ class TestRestaurantCollectionGet(testing.TestBase):
         self.srmock = testing.StartResponseMock()
         self.restaurants = [
             Restaurant(name='a', description='desc', email='a@b.com',
-                       address='Asakusa, Taito-ku, Tokyo', tags=['x', 'y', 'z'], geolocation=[139.79843, 35.712074],
-                       menus=[Menu(name='menu1', price=1000.00, currency='JPY', images=[], tags=['a', 'b'])]),
+                       address='Asakusa, Taito-ku, Tokyo', geolocation=[139.79843, 35.712074]),
             Restaurant(name='b', description='description', email='b@a.com',
-                       address='Roppongi, Minato-ku, Tokyo', tags=['z'], geolocation=[139.731443, 35.662836],
-                       menus=[Menu(name='menuA', price=400.00, currency='JPY', images=[], tags=['a', 'b'])])
+                       address='Roppongi, Minato-ku, Tokyo', geolocation=[139.731443, 35.662836])
         ]
         for r in self.restaurants:
             r.save()
@@ -41,17 +39,10 @@ class TestRestaurantCollectionGet(testing.TestBase):
             {'query_string': 'description=description', 'expected': {"status": 200, "count": 1}},
             {'query_string': 'name=c', 'expected': {"status": 200, "count": 0}},
             {'query_string': 'email=b@a.com', 'expected': {"status": 200, "count": 1}},
-            {'query_string': 'tags=z', 'expected': {"status": 200, "count": 2}},
-            {'query_string': 'tags=x', 'expected': {"status": 200, "count": 1}},
-            {'query_string': 'tags=x&name=a', 'expected': {"status": 200, "count": 1}},
-            {'query_string': 'tags=x&name=c', 'expected': {"status": 200, "count": 0}},
             {'query_string': 'geolocation=139.731443,35.662836', 'expected': {"status": 200, "count": 1}},
             {'query_string': 'geolocation=ab,cd', 'expected': {"status": 400}},
             {'query_string': 'limit=1', 'expected': {"status": 200, "count": 1}},
             {'query_string': 'start=2&limit=1', 'expected': {"status": 200, "count": 0}},
-            {'query_string': 'price=100,', 'expected': {"status": 200, "count": 2}},
-            {'query_string': 'price=100,400', 'expected': {"status": 200, "count": 1}},
-            {'query_string': 'price=800,1200', 'expected': {"status": 200, "count": 1}},
             {'query_string': 'start=1limit=1', 'expected': {"status": 400}}
         ]
         for t in tests:
@@ -70,7 +61,7 @@ class TestRestaurantCollectionGet(testing.TestBase):
                 self.assertIn('description', body.keys())
                 continue
 
-            self.assertListEqual(["count", "items"], sorted(body.keys()))
+            self.assertItemsEqual(["count", "items"], body.keys())
             self.assertEqual(body['count'], t['expected']['count'], "{}".format(t['query_string']))
 
 
@@ -88,7 +79,6 @@ class TestRestaurantCollectionPost(testing.TestBase):
             "address": "ueno",
             "email": "kf@c.com",
             "menus": [],
-            "tags": [],
             "geolocation": TOKYO_GEOLOCATION
         }
         base_restaurant.update(kwargs)
@@ -111,7 +101,8 @@ class TestRestaurantCollectionPost(testing.TestBase):
     def test_collection_on_post(self):
 
         restaurant1 = self.get_mock_restaurant(name="First Kitchen")  # with no menus (not good!)
-
+        menus1 = [self.get_mock_menu()]
+        restaurant1.update({'menus': menus1})
         restaurant2 = self.get_mock_restaurant()
         menus2 = [self.get_mock_menu(name="menu A"), self.get_mock_menu(name="menu B")]
         restaurant2.update({'menus': menus2})
@@ -124,9 +115,7 @@ class TestRestaurantCollectionPost(testing.TestBase):
                     "address": "ueno",
                     "description": "",
                     "geolocation": TOKYO_GEOLOCATION,
-                    "email": "kf@c.com",
-                    "tags": [],
-                    "menus": []
+                    "email": "kf@c.com"
                 }
             },
             {
@@ -136,28 +125,7 @@ class TestRestaurantCollectionPost(testing.TestBase):
                     "address": "ueno",
                     "description": "",
                     "geolocation": TOKYO_GEOLOCATION,
-                    "email": "kf@c.com",
-                    "tags": [],
-                    "menus": [
-                        {
-                            "name": "menu A",
-                            "price": 100.00,
-                            "currency": "JPY",
-                            "tags": [],
-                            "images": ['http://kfc.com/1.jpg'],
-                            "rating": 0.0,
-                            "yums": 0
-                        },
-                        {
-                            "name": "menu B",
-                            "price": 100.00,
-                            "currency": "JPY",
-                            "tags": [],
-                            "images": ['http://kfc.com/1.jpg'],
-                            "rating": 0.0,
-                            "yums": 0
-                        }
-                    ]
+                    "email": "kf@c.com"
                 }
             }
         ]
@@ -188,56 +156,17 @@ class TestRestaurantItemGet(testing.TestBase):
                 'description': 'desc A',
                 'email': 'a@b.com',
                 'address': 'tokyo',
-                'tags': [],
-                'menus': [
-                    {
-                        'name': 'menu A',
-                        'price': 800.00,
-                        'currency': 'JPY',
-                        'rating': 0,
-                        'images': [
-                            'http://benri.jp/1.jpg',
-                            'http://benri.jp/2.jpg'
-                        ],
-                        'tags': []
-                    },
-                    {
-                        'name': 'menu B',
-                        'price': 650.00,
-                        'currency': 'JPY',
-                        'rating': 4,
-                        'images': [
-                            'http://benri.jp/3.jpg'
-                        ],
-                        'tags': []
-                    }
-                ]
             },
             {
                 'name': 'b',
                 'description': 'desc B',
                 'email': 'b@a.com',
                 'address': 'kyoto',
-                'tags': ['b'],
-                'menus': [
-                    {
-                        'name': 'menu ABC',
-                        'price': 1000.00,
-                        'currency': 'JPY',
-                        'rating': 4,
-                        'images': [
-                            'http://benri.jp/5.jpg'
-                        ],
-                        'tags': []
-                    }
-                ]
             }
         ]
         self.restaurants = []
         for r in restaurants:
-            menus = r.pop('menus')
             rest = Restaurant(**r)
-            rest.menus = [Menu(**menu) for menu in menus]
             rest.save()
             self.restaurants.append(rest)
 
@@ -290,56 +219,17 @@ class TestRestaurantItemDelete(testing.TestBase):
                 'description': 'desc A',
                 'email': 'a@b.com',
                 'address': 'tokyo',
-                'tags': [],
-                'menus': [
-                    {
-                        'name': 'menu A',
-                        'price': 800.00,
-                        'currency': 'JPY',
-                        'rating': 0,
-                        'images': [
-                            'http://benri.jp/1.jpg',
-                            'http://benri.jp/2.jpg'
-                        ],
-                        'tags': []
-                    },
-                    {
-                        'name': 'menu B',
-                        'price': 650.00,
-                        'currency': 'JPY',
-                        'rating': 4,
-                        'images': [
-                            'http://benri.jp/3.jpg'
-                        ],
-                        'tags': []
-                    }
-                ]
             },
             {
                 'name': 'b',
                 'description': 'desc B',
                 'email': 'b@a.com',
                 'address': 'kyoto',
-                'tags': ['b'],
-                'menus': [
-                    {
-                        'name': 'menu ABC',
-                        'price': 1000.00,
-                        'currency': 'JPY',
-                        'rating': 4,
-                        'images': [
-                            'http://benri.jp/5.jpg'
-                        ],
-                        'tags': []
-                    }
-                ]
             }
         ]
         self.restaurants = []
         for r in restaurants:
-            menus = r.pop('menus')
             rest = Restaurant(**r)
-            rest.menus = [Menu(**menu) for menu in menus]
             rest.save()
             self.restaurants.append(rest)
 
@@ -402,17 +292,7 @@ class TestRestaurantItemPut(testing.TestBase):
             description='desc',
             email='a@b.com',
             address='Asakusa, Taito-ku, Tokyo',
-            tags=['x', 'y', 'z'],
-            geolocation=[139.79843, 35.712074],
-            menus=[
-                Menu(
-                    name='menu1',
-                    price=100.00,
-                    currency='JPY',
-                    images=[],
-                    tags=['a', 'b']
-                )
-            ]
+            geolocation=[139.79843, 35.712074]
         )
 
         self.restaurant = rst.save()

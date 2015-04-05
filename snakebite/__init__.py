@@ -7,7 +7,7 @@ import logging
 import os
 from mongoengine import connection
 from logging.handlers import TimedRotatingFileHandler
-from snakebite.controllers import restaurant, tag, status
+from snakebite.controllers import restaurant, menu, tag, status, rating, user
 from snakebite.constants import DATETIME_FORMAT
 
 
@@ -24,13 +24,20 @@ class SnakeBite(object):
 
         self.app = falcon.API(before=[self.cors_middleware()])
         self._set_logging()
-
-        # setup database
         self._setup_db()
+        self._load_routes()
 
-        # load routes
+    def _load_routes(self):
         self.app.add_route('/restaurants', restaurant.Collection())
         self.app.add_route('/restaurants/{id}', restaurant.Item())
+        self.app.add_route('/menus', menu.Collection())
+        self.app.add_route('/menus/{id}', menu.Item())
+        self.app.add_route('/users', user.Collection())
+        self.app.add_route('/users/{id}', user.Item())
+
+        # pseudo resources
+        self.app.add_route('/ratings/menus/', rating.Collection())
+        self.app.add_route('/ratings/menus/{id}', rating.Item())
         self.app.add_route('/tags', tag.Collection())
         self.app.add_route('/status', status.Status())
 
