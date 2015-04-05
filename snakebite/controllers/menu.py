@@ -89,11 +89,12 @@ class Collection(object):
         # since mongoengine filters directly by finding any Menu that has tags of that value
         # e.g., GET /menu?tags=chicken returns all restaurants having 'chicken' tag
 
-        if 'price' in query_params:
-            price_range = query_params.pop('price')
-            price_min, price_max = min_max(price_range, type='float')
-            updated_params['price__gte'] = price_min
-            updated_params['price__lte'] = price_max
+        for item in ['price', 'rating']:
+            if item in query_params:
+                range = query_params.pop(item)
+                r_min, r_max = min_max(range, type='float')
+                updated_params['{}__gte'.format(item)] = r_min
+                updated_params['{}__lte'.format(item)] = r_max
 
         if restaurants:
             # we found nearby restaurants, filter menus further to menus from these restaurants only

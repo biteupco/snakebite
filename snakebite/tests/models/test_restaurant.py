@@ -49,3 +49,5 @@ class TestRestaurant(testing.TestBase):
     def test_remove(self):
         Restaurant.objects(name__in=['a', 'b']).delete()
         self.assertEquals(len(Restaurant.objects), 0)
+
+
