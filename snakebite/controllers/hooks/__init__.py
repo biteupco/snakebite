@@ -23,7 +23,7 @@ def deserialize(req, res, resource, schema=None):
     def _is_json_type(content_type):
         return content_type == 'application/json'
 
-    if req.method.upper() in ['POST', 'PUT', 'DELETE']:
+    if req.method.upper() in ['POST', 'PUT', 'PATCH']:
 
         if not _is_json_type(req.content_type):
             raise HTTPNotAcceptable(description='JSON required. '
@@ -47,7 +47,7 @@ def deserialize(req, res, resource, schema=None):
 
         req.params['body'] = body
 
-    elif req.method.upper() == 'GET':
+    elif req.method.upper() in ['OPTIONS', 'HEAD', 'GET', 'DELETE']:
 
         req.params['query'] = {}
 

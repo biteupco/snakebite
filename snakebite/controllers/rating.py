@@ -4,11 +4,19 @@ from __future__ import absolute_import
 import falcon
 from snakebite import constants
 from snakebite.controllers.hooks import deserialize, serialize
+from snakebite.controllers.schema.rating import MenuRatingSchema
 from snakebite.models.restaurant import Menu
 from snakebite.models.rating import MenuRating
 from snakebite.models.user import User
 from snakebite.libs.error import HTTPBadRequest
 from mongoengine.errors import DoesNotExist, MultipleObjectsReturned, ValidationError
+
+
+# -------- BEFORE_HOOK functions
+def deserialize_create(req, res, resource):
+    deserialize(req, res, resource, schema=MenuRatingSchema())
+
+# -------- END functions
 
 
 class Collection(object):
@@ -44,6 +52,48 @@ class Collection(object):
 
         ratings = MenuRating.objects(**updated_params)[start:end]
         res.body = {'items': ratings, 'count': len(ratings)}
+
+    @falcon.before(deserialize_create)
+    @falcon.after(serialize)
+    def on_post(self, req, res):
+        data = req.params.get('body')
+        try:
+            menu = Menu.objects.get(id=data['menu_id'])
+            user = User.objects.get(id=data['user_id'])
+        except (ValidationError, DoesNotExist, MultipleObjectsReturned):
+            raise HTTPBadRequest(title='Invalid Request', description='Please supply a valid menu ID')
+
+        # update menu ratings
+        menu.rating_count += 1
+        menu.rating_total += data['rating']
+        # create a new menu rating instance
+
+        rating = MenuRating(menu=menu, user=user, rating=data['rating'])
+
+        menu.save()
+        rating.save()
+
+        rating = MenuRating.objects.get(id=rating.id)
+        res.body = rating
+
+    @falcon.before(deserialize)
+    @falcon.after(serialize)
+    def on_delete(self, req, res):
+        query_params = req.params.get('query')
+        menu_id = query_params.get('menu_id')
+        user_id = query_params.get('user_id')
+
+        if not user_id or not menu_id:
+            raise HTTPBadRequest(title='Invalid Request',
+                                 description='Please supply a user ID and menu ID in the query params')
+
+        try:
+            user = User.objects.get(id=user_id)
+            menu = Menu.objects.get(id=menu_id)
+            MenuRating.objects(menu=menu, user=user).delete()
+
+        except (ValidationError, DoesNotExist):
+            raise HTTPBadRequest(title='Invalid Value', description='Invalid user or menu ID provided')
 
 
 class Item(object):
