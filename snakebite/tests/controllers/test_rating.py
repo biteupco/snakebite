@@ -102,7 +102,43 @@ class TestRatingCollectionPost(TestRatingWithSetup):
         self.tearDownDB()
 
     def test_on_post(self):
-        pass
+        tests = [
+            {'data': json.dumps({}), 'expected': {'status': 400}},
+            {'data': json.dumps({'menu_id': 'randomString', 'user_id': 'randomString', 'rating': 3.0}), 'expected': {'status': 400}},
+            {
+                'data': json.dumps({
+                    'menu_id': str(self.menus[0].id),
+                    'user_id': str(self.users[0].id),
+                    'rating': 4.0
+                }),
+                'expected': {
+                    'status': 200,
+                    'body': {
+                        'rating': 4.0,
+                        'menu': {'$id': {'$oid': str(self.menus[0].id)}, '$ref': 'menu'},
+                        'user': {'$id': {'$oid': str(self.users[0].id)}, '$ref': 'user'}
+                    }
+                }
+            }
+        ]
+
+        for t in tests:
+            res = self.simulate_request('/ratings/menus',
+                                        body=t['data'],
+                                        method='POST',
+                                        headers={'Content-Type': 'application/json'})
+
+            self.assertTrue(isinstance(res, list))
+            body = json.loads(res[0])
+            self.assertTrue(isinstance(body, dict))
+
+            if t['expected']['status'] != 200:
+                self.assertNotIn('count', body.keys())
+                self.assertIn('title', body.keys())
+                self.assertIn('description', body.keys())
+                continue
+
+            self.assertDictContainsSubset(t['expected']['body'], body, 'got: {}, want: {}'.format(body, t['expected']['body']))
 
 
 class TestRatingCollectionDelete(TestRatingWithSetup):
