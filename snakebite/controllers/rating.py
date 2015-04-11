@@ -92,7 +92,7 @@ class Collection(object):
             menu = Menu.objects.get(id=menu_id)
             MenuRating.objects(menu=menu, user=user).delete()
 
-        except (ValidationError, DoesNotExist) as e:
+        except (ValidationError, DoesNotExist):
             raise HTTPBadRequest(title='Invalid Value', description='Invalid user or menu ID provided')
 
 

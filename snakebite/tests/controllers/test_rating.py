@@ -152,11 +152,46 @@ class TestRatingCollectionDelete(TestRatingWithSetup):
 
         self.setup_common_resources_DB()
 
+        self.ratings = [
+            MenuRating(user=self.users[0], menu=self.menus[0], rating=4.0),
+            MenuRating(user=self.users[1], menu=self.menus[1], rating=2.0),
+            MenuRating(user=self.users[0], menu=self.menus[1], rating=5.0)
+        ]
+        for r in self.ratings:
+            r.save()
+
     def tearDown(self):
         self.tearDownDB()
 
     def test_on_delete(self):
-        pass
+        tests = [
+            {'query_string': '', 'expected': {"status": 400}},
+            {'query_string': 'menu_id=random&user_id=random', 'expected': {"status": 400}},
+            {'query_string': 'menu_id={}&user_id={}'.format(str(self.menus[0].id), "random"), 'expected': {"status": 400}},
+            {'query_string': 'menu_id={}&user_id={}'.format(str(self.menus[0].id), str(self.users[1].id)), 'expected': {"status": 200}},  # none found but we return 200
+            {'query_string': 'menu_id={}&user_id={}'.format(str(self.menus[1].id), str(self.users[1].id)), 'expected': {"status": 200}}
+        ]
+
+        for t in tests:
+            res = self.simulate_request('/ratings/menus',
+                                        query_string=t['query_string'],
+                                        method='DELETE',
+                                        headers={'Content-Type': 'application/json'})
+
+            self.assertTrue(isinstance(res, list))
+            body = json.loads(res[0])
+
+            if t['expected']['status'] != 200:
+                self.assertTrue(isinstance(body, dict))
+                self.assertIn('title', body.keys())
+                self.assertIn('description', body.keys())  # error
+
+            else:
+                self.assertIsNone(body)
+
+        self.assertItemsEqual([], MenuRating.objects(menu=self.menus[1], user=self.users[1]))  # deleted
+        self.assertNotEqual([], MenuRating.objects(menu=self.menus[0], user=self.users[0]))  # not deleted
+        self.assertNotEqual([], MenuRating.objects(menu=self.menus[1], user=self.users[0]))  # not deleted
 
 
 class TestRatingItemGet(TestRatingWithSetup):
