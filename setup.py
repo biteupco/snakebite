@@ -11,7 +11,7 @@ requires = [
     "falcon==0.2.0b1",
     "Cython==0.21.1",
     "colander==1.0",
-    "pymongo==2.8"
+    "pymongo==2.8",
     "mongoengine==0.8.7",
     "gunicorn==18.0"
 ]
