@@ -11,6 +11,9 @@ install:
 services:
   - mongodb
 
+before_script:
+  - sleep 15
+
 script:
   - coverage run --source=snakebite setup.py nosetests
   - python setup.py flake8
