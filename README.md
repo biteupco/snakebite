@@ -98,3 +98,5 @@ Target coverage: 80% (current: 100%)
 
 When deploying to environments other than your local environment ('dev'), please ensure that you set the 'BENRI_ENV' environment variable in the OS before running the server.
 This is so that the right config file can be loaded for initializing the application.
+
+### TEST
