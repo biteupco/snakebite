@@ -53,48 +53,6 @@ class Collection(object):
         ratings = MenuRating.objects(**updated_params)[start:end]
         res.body = {'items': ratings, 'count': len(ratings)}
 
-    @falcon.before(deserialize_create)
-    @falcon.after(serialize)
-    def on_post(self, req, res):
-        data = req.params.get('body')
-        try:
-            menu = Menu.objects.get(id=data['menu_id'])
-            user = User.objects.get(id=data['user_id'])
-        except (ValidationError, DoesNotExist, MultipleObjectsReturned):
-            raise HTTPBadRequest(title='Invalid Request', description='Please supply a valid menu ID')
-
-        # update menu ratings
-        menu.rating_count += 1
-        menu.rating_total += data['rating']
-        # create a new menu rating instance
-
-        rating = MenuRating(menu=menu, user=user, rating=data['rating'])
-
-        menu.save()
-        rating.save()
-
-        rating = MenuRating.objects.get(id=rating.id)
-        res.body = rating
-
-    @falcon.before(deserialize)
-    @falcon.after(serialize)
-    def on_delete(self, req, res):
-        query_params = req.params.get('query')
-        menu_id = query_params.get('menu_id')
-        user_id = query_params.get('user_id')
-
-        if not user_id or not menu_id:
-            raise HTTPBadRequest(title='Invalid Request',
-                                 description='Please supply a user ID and menu ID in the query params')
-
-        try:
-            user = User.objects.get(id=user_id)
-            menu = Menu.objects.get(id=menu_id)
-            MenuRating.objects(menu=menu, user=user).delete()
-
-        except (ValidationError, DoesNotExist):
-            raise HTTPBadRequest(title='Invalid Value', description='Invalid user or menu ID provided')
-
 
 class Item(object):
     def __init__(self):
@@ -109,8 +67,48 @@ class Item(object):
     @falcon.before(deserialize)
     @falcon.after(serialize)
     def on_get(self, req, res, id):
-
-
         menu = self._try_get_menu(id)
         ratings = MenuRating.objects(menu=menu)
         res.body = {'items': ratings, 'count': len(ratings)}
+
+    @falcon.before(deserialize_create)
+    @falcon.after(serialize)
+    def on_post(self, req, res, id):
+        menu = self._try_get_menu(id)
+
+        data = req.params.get('body')
+        try:
+            user = User.objects.get(id=data['user_id'])
+        except (ValidationError, DoesNotExist, MultipleObjectsReturned):
+            raise HTTPBadRequest(title='Invalid Request', description='Please supply a valid menu ID')
+
+        # update menu ratings
+        menu.rating_count += 1
+        menu.rating_total += data['rating']
+
+        # create a new menu rating instance
+        rating = MenuRating(menu=menu, user=user, rating=data['rating'])
+
+        menu.save()
+        rating.save()
+
+        rating = MenuRating.objects.get(id=rating.id)
+        res.body = rating
+
+    @falcon.before(deserialize)
+    @falcon.after(serialize)
+    def on_delete(self, req, res, id):
+        menu = self._try_get_menu(id)
+        query_params = req.params.get('query')
+        user_id = query_params.get('user_id')
+
+        if not user_id:
+            raise HTTPBadRequest(title='Invalid Request',
+                                 description='Please supply a user ID in the query params')
+
+        try:
+            user = User.objects.get(id=user_id)
+            MenuRating.objects(menu=menu, user=user).delete()
+
+        except (ValidationError, DoesNotExist):
+            raise HTTPBadRequest(title='Invalid Value', description='Invalid user or menu ID provided')
