@@ -87,120 +87,13 @@ class TestRatingCollectionGet(TestRatingWithSetup):
             self.assertEqual(got, want, "{}| got: {}, want: {}".format(t['query_string'], got, want))
 
 
-class TestRatingCollectionPost(TestRatingWithSetup):
-
-    def setUp(self):
-        self.resource = rating.Collection()
-        self.api = get_test_snakebite().app
-
-        self.api.add_route('/rating/menus', self.resource)
-        self.srmock = testing.StartResponseMock()
-
-        self.setup_common_resources_DB()
-
-    def tearDown(self):
-        self.tearDownDB()
-
-    def test_on_post(self):
-        tests = [
-            {'data': json.dumps({}), 'expected': {'status': 400}},
-            {'data': json.dumps({'menu_id': 'randomString', 'user_id': 'randomString', 'rating': 3.0}), 'expected': {'status': 400}},
-            {
-                'data': json.dumps({
-                    'menu_id': str(self.menus[0].id),
-                    'user_id': str(self.users[0].id),
-                    'rating': 4.0
-                }),
-                'expected': {
-                    'status': 200,
-                    'body': {
-                        'rating': 4.0,
-                        'menu': {'$id': {'$oid': str(self.menus[0].id)}, '$ref': 'menu'},
-                        'user': {'$id': {'$oid': str(self.users[0].id)}, '$ref': 'user'}
-                    }
-                }
-            }
-        ]
-
-        for t in tests:
-            res = self.simulate_request('/ratings/menus',
-                                        body=t['data'],
-                                        method='POST',
-                                        headers={'Content-Type': 'application/json'})
-
-            self.assertTrue(isinstance(res, list))
-            body = json.loads(res[0])
-            self.assertTrue(isinstance(body, dict))
-
-            if t['expected']['status'] != 200:
-                self.assertNotIn('count', body.keys())
-                self.assertIn('title', body.keys())
-                self.assertIn('description', body.keys())
-                continue
-
-            self.assertDictContainsSubset(t['expected']['body'], body, 'got: {}, want: {}'.format(body, t['expected']['body']))
-
-
-class TestRatingCollectionDelete(TestRatingWithSetup):
-
-    def setUp(self):
-        self.resource = rating.Collection()
-        self.api = get_test_snakebite().app
-
-        self.api.add_route('/rating/menus', self.resource)
-        self.srmock = testing.StartResponseMock()
-
-        self.setup_common_resources_DB()
-
-        self.ratings = [
-            MenuRating(user=self.users[0], menu=self.menus[0], rating=4.0),
-            MenuRating(user=self.users[1], menu=self.menus[1], rating=2.0),
-            MenuRating(user=self.users[0], menu=self.menus[1], rating=5.0)
-        ]
-        for r in self.ratings:
-            r.save()
-
-    def tearDown(self):
-        self.tearDownDB()
-
-    def test_on_delete(self):
-        tests = [
-            {'query_string': '', 'expected': {"status": 400}},
-            {'query_string': 'menu_id=random&user_id=random', 'expected': {"status": 400}},
-            {'query_string': 'menu_id={}&user_id={}'.format(str(self.menus[0].id), "random"), 'expected': {"status": 400}},
-            {'query_string': 'menu_id={}&user_id={}'.format(str(self.menus[0].id), str(self.users[1].id)), 'expected': {"status": 200}},  # none found but we return 200
-            {'query_string': 'menu_id={}&user_id={}'.format(str(self.menus[1].id), str(self.users[1].id)), 'expected': {"status": 200}}
-        ]
-
-        for t in tests:
-            res = self.simulate_request('/ratings/menus',
-                                        query_string=t['query_string'],
-                                        method='DELETE',
-                                        headers={'Content-Type': 'application/json'})
-
-            self.assertTrue(isinstance(res, list))
-            body = json.loads(res[0])
-
-            if t['expected']['status'] != 200:
-                self.assertTrue(isinstance(body, dict))
-                self.assertIn('title', body.keys())
-                self.assertIn('description', body.keys())  # error
-
-            else:
-                self.assertIsNone(body)
-
-        self.assertItemsEqual([], MenuRating.objects(menu=self.menus[1], user=self.users[1]))  # deleted
-        self.assertNotEqual([], MenuRating.objects(menu=self.menus[0], user=self.users[0]))  # not deleted
-        self.assertNotEqual([], MenuRating.objects(menu=self.menus[1], user=self.users[0]))  # not deleted
-
-
 class TestRatingItemGet(TestRatingWithSetup):
 
     def setUp(self):
-        self.resource = rating.Collection()
+        self.resource = rating.Item()
         self.api = get_test_snakebite().app
 
-        self.api.add_route('/rating/menus', self.resource)
+        self.api.add_route('/ratings/menus/{id}', self.resource)
         self.srmock = testing.StartResponseMock()
 
         self.setup_common_resources_DB()
@@ -241,3 +134,110 @@ class TestRatingItemGet(TestRatingWithSetup):
             got = body['count']
             want = t['expected']['count']
             self.assertEqual(got, want, "{}| got: {}, want: {}".format(t['id'], got, want))
+
+
+class TestRatingItemPost(TestRatingWithSetup):
+
+    def setUp(self):
+        self.resource = rating.Item()
+        self.api = get_test_snakebite().app
+
+        self.api.add_route('/ratings/menus/{id}', self.resource)
+        self.srmock = testing.StartResponseMock()
+
+        self.setup_common_resources_DB()
+
+    def tearDown(self):
+        self.tearDownDB()
+
+    def test_on_post(self):
+        tests = [
+            {'id': 'randomMenuID', 'data': json.dumps({'user_id': 'randomString', 'rating': 3.0}), 'expected': {'status': 400}},
+            {'id': str(self.menus[0].id), 'data': json.dumps({'user_id': 'randomString', 'rating': 3.0}), 'expected': {'status': 400}},
+            {
+                'id': str(self.menus[0].id),
+                'data': json.dumps({
+                    'user_id': str(self.users[0].id),
+                    'rating': 4.0
+                }),
+                'expected': {
+                    'status': 200,
+                    'body': {
+                        'rating': 4.0,
+                        'menu': {'$id': {'$oid': str(self.menus[0].id)}, '$ref': 'menu'},
+                        'user': {'$id': {'$oid': str(self.users[0].id)}, '$ref': 'user'}
+                    }
+                }
+            }
+        ]
+
+        for t in tests:
+            res = self.simulate_request('/ratings/menus/{id}'.format(id=t['id']),
+                                        body=t['data'],
+                                        method='POST',
+                                        headers={'Content-Type': 'application/json'})
+
+            self.assertTrue(isinstance(res, list))
+            body = json.loads(res[0])
+            self.assertTrue(isinstance(body, dict))
+
+            if t['expected']['status'] != 200:
+                self.assertNotIn('count', body.keys())
+                self.assertIn('title', body.keys())
+                self.assertIn('description', body.keys())
+                continue
+
+            self.assertDictContainsSubset(t['expected']['body'], body, 'got: {}, want: {}'.format(body, t['expected']['body']))
+
+
+# class TestRatingItemDelete(TestRatingWithSetup):
+#
+#     def setUp(self):
+#         self.resource = rating.Item()
+#         self.api = get_test_snakebite().app
+#
+#         self.api.add_route('/ratings/menus/{id}', self.resource)
+#         self.srmock = testing.StartResponseMock()
+#
+#         self.setup_common_resources_DB()
+#
+#         self.ratings = [
+#             MenuRating(user=self.users[0], menu=self.menus[0], rating=4.0),
+#             MenuRating(user=self.users[1], menu=self.menus[1], rating=2.0),
+#             MenuRating(user=self.users[0], menu=self.menus[1], rating=5.0)
+#         ]
+#         for r in self.ratings:
+#             r.save()
+#
+#     def tearDown(self):
+#         self.tearDownDB()
+#
+#     def test_on_delete(self):
+#         tests = [
+#             {'id': 'randomMenuID', 'query_string': 'user_id=random', 'expected': {"status": 400}},
+#             {'id': str(self.menus[0].id), 'query_string': 'user_id={}'.format("random"), 'expected': {"status": 400}},
+#             {'id': str(self.menus[0].id), 'query_string': 'user_id={}'.format(str(self.users[1].id)), 'expected': {"status": 200}},  # none found but we return 200
+#             {'id': str(self.menus[1].id), 'query_string': 'user_id={}'.format(str(self.users[1].id)), 'expected': {"status": 200}}
+#         ]
+#
+#         for t in tests:
+#             res = self.simulate_request('/ratings/menus/{}'.format(t['id']),
+#                                         query_string=t['query_string'],
+#                                         method='DELETE',
+#                                         headers={'Content-Type': 'application/json'})
+#
+#             self.assertTrue(isinstance(res, list))
+#             body = json.loads(res[0])
+#             self.assertTrue(isinstance(body, dict))
+#
+#             if t['expected']['status'] != 200:
+#                 self.assertTrue(isinstance(body, dict))
+#                 self.assertIn('title', body.keys())
+#                 self.assertIn('description', body.keys())  # error
+#
+#             else:
+#                 self.assertIsNone(body)
+#
+#         self.assertItemsEqual([], MenuRating.objects(menu=self.menus[1], user=self.users[1]))  # deleted
+#         self.assertNotEqual([], MenuRating.objects(menu=self.menus[0], user=self.users[0]))  # not deleted
+#         self.assertNotEqual([], MenuRating.objects(menu=self.menus[1], user=self.users[0]))  # not deleted
