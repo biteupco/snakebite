@@ -5,6 +5,14 @@ import mongoengine as mongo
 from snakebite.constants import TWEET_CHAR_LENGTH
 
 
+class Restaurant(mongo.DynamicDocument):
+    name = mongo.StringField(required=True)
+    address = mongo.StringField(required=True)
+    email = mongo.EmailField()
+    geolocation = mongo.PointField()
+    description = mongo.StringField(max_length=TWEET_CHAR_LENGTH)
+
+
 class Menu(mongo.DynamicDocument):
     name = mongo.StringField(required=True)
     price = mongo.DecimalField(min_value=0, required=True)  # defaults to 2 dp, rounded up
@@ -12,7 +20,7 @@ class Menu(mongo.DynamicDocument):
     images = mongo.ListField(mongo.URLField())  # list of urls
     tags = mongo.ListField()
     yums = mongo.IntField(min_value=0, default=0)
-    restaurant = mongo.ReferenceField('Restaurant', dbref=True)
+    restaurant = mongo.ReferenceField(Restaurant, dbref=True, reverse_delete_rule=mongo.CASCADE)
 
     rating_count = mongo.IntField(required=True, default=0)
     rating_total = mongo.FloatField(required=True, default=0)
@@ -22,12 +30,3 @@ class Menu(mongo.DynamicDocument):
         if self.rating_count < 1:
             return 0.00
         return float(self.rating_total / float(self.rating_count))
-
-
-class Restaurant(mongo.DynamicDocument):
-    name = mongo.StringField(required=True)
-    address = mongo.StringField(required=True)
-    email = mongo.EmailField()
-    geolocation = mongo.PointField()
-    description = mongo.StringField(max_length=TWEET_CHAR_LENGTH)
-    # menus = mongo.ListField(mongo.ReferenceField(Menu, dbref=True))
