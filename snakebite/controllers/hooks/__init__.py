@@ -83,6 +83,8 @@ def serialize(req, res, resource):
             return {k: _to_json(v) for k, v in obj.iteritems()}
         if isinstance(obj, mongo.queryset.queryset.QuerySet):
             return [_to_json(item) for item in obj]
+        if isinstance(obj, list) and isinstance(obj[0], mongo.Document):
+            return [_to_json(item) for item in obj]
         return obj
 
     res.body = json_util.dumps(_to_json(res.body))
