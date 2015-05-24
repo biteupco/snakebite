@@ -29,10 +29,11 @@ class RestaurantCollection(object):
         query_params = req.params.get('query')
 
         # get IDs
-        ids = query_params.pop('ids')
-        if not ids:
-            raise HTTPBadRequest(title='Invalid Value',
-                                 description='Missing IDs in URL query')
+        try:
+            ids = query_params.pop('ids')
+        except KeyError:
+            raise HTTPBadRequest(title='Invalid Request',
+                                 description='Missing ID parameter in URL query')
 
         # parse IDs
         ids = ids.split(',')
