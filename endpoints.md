@@ -18,6 +18,8 @@ Additionally, we opened up a `/batch` endpoint to handle all batch-related opera
 
 We will go through the allowable methods on each of the resources.
 
+----
+
 #### Menu
 
 > List menus
@@ -33,6 +35,7 @@ You can further query/filter the list of menus with the following parameters:
 | name | `/menus?name=curry` | list all menus with `curry` in their name | |
 | price | `/menus?price=100,500` | list all menus between 100￥ to 500￥ (inclusive) | |
 | rating | `/menus?rating=3,5` | list all menus with rating between 3 to 5 (inclusive) | |
+| tags | `/menus?tags=chicken` | list all menus with `chicken` tag associated | |
 | geolocation | `/menus?geolocation=1,2` | list all menus within distance (1km default) from geolocation of longitude 1, latitude 2 | |
 | maxDist | `/menus?geolocation=1,2&maxDist=200` | list all menus within 200m from geolocation of longitude 1, latitude 2 | 1000 |
 
@@ -94,3 +97,36 @@ DELETE /menus/:menu_id
 ```
 
 This deletes the above menu, returning a `200 OK` status code if successful.
+
+----
+
+#### Restaurants
+
+[TODO]
+
+----
+
+#### Ratings (Menu)
+
+You can search for ratings of the menus from the user perspective (i.e., which menus have the user rated).
+More interestingly, you can also list ratings as from the ranking perspective (i.e., which menus are ranked top for `chicken` tag).
+
+> List a user's menu ratings
+
+```
+GET /user/:user_id/ratings/menus
+```
+
+
+> List the menu ratings (ranked top-down)
+
+```
+GET /ratings/menus
+```
+
+You need to further query/filter the list of menu ratings with **at least one** of following parameters:
+
+| parameter | example | description | default |
+| ---- | ---- | ---- | ---- |
+| tags | `/ratings/menus?tags=chicken` | list all menu ratings for menus having the `chicken` tag | |
+| price | `/ratings/menus?price=100,500` | list all menu ratings for menus priced between 100￥ to 500￥ (inclusive) | |
