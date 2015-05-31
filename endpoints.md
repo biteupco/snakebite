@@ -54,12 +54,12 @@ You can create a new menu via the above method and the following items are requi
 
 | parameter | required | description | default |
 | ---- | ---- | ---- | ---- |
-| restaurant_id | YES | ID of restaurant that this menu belongs to | |
-| name | YES | name of menu (can be in non-English) | |
-| price | YES | price of menu (up to 2 decimal places) | |
-| currency | YES | three-character currency (price-related) | 'JPY' |
-| images | YES | list of image links related to this menu | |
-| tags | YES | list of tags to associate with this menu | |
+| restaurant_id | ✔ | ID of restaurant that this menu belongs to | |
+| name | ✔ | name of menu (can be in non-English) | |
+| price | ✔ | price of menu (up to 2 decimal places) | |
+| currency | ✔ | three-character currency (price-related) | 'JPY' |
+| images | ✔ | list of image links related to this menu | |
+| tags | ✔ | list of tags to associate with this menu | |
 
 ```
 # Example post using CURL
@@ -79,11 +79,11 @@ You can update an existing menu via the above method and the following items can
 
 | parameter | required | description | default |
 | ---- | ---- | ---- | ---- |
-| name | YES | name of menu (can be in non-English) | |
-| price | YES | price of menu (up to 2 decimal places) | |
-| currency | YES | three-character currency (price-related) | 'JPY' |
-| images | YES | list of image links related to this menu | |
-| tags | YES | list of tags to associate with this menu | |
+| name | ✔| name of menu (can be in non-English) | |
+| price | ✔ | price of menu (up to 2 decimal places) | |
+| currency | ✔ | three-character currency (price-related) | 'JPY' |
+| images | ✔ | list of image links related to this menu | |
+| tags | ✔ | list of tags to associate with this menu | |
 
 Take note that you are not allowed to change the menu's associated restaurant ID. To do so, we recommend you delete the menu and recreate.
 
