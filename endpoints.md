@@ -9,9 +9,9 @@ Design-wise, Snakebite tries to adheres to RESTful design principles in terms of
 
 Currently, the resources that end users or clients can get access to are the following:
 
-- Menu `/menus`
-- Restaurant `/restaurants`
-- Rating `/ratings`
+- [Menu `/menus`](#menu)
+- [Restaurant `/restaurants`](#restaurants)
+- [Rating `/ratings`](#ratings)
 
 
 Additionally, we opened up a `/batch` endpoint to handle all batch-related operations so that batch requests can be performed with fewer HTTP requests.
