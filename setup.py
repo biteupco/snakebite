@@ -13,7 +13,8 @@ requires = [
     "colander==1.0",
     "pymongo==2.8",
     "mongoengine==0.8.7",
-    "gunicorn==18.0"
+    "gunicorn==18.0",
+    "PyJWT==1.3.0",
 ]
 
 extras_require = {
