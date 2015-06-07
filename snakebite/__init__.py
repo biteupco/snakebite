@@ -9,7 +9,7 @@ from mongoengine import connection
 from logging.handlers import TimedRotatingFileHandler
 from snakebite.controllers import restaurant, menu, tag, status, rating, user, batch
 from snakebite.middlewares.auth import JWTAuthMiddleware
-from snakebite.constants import DATETIME_FORMAT
+from snakebite.constants import DATETIME_FORMAT, AUTH_SHARED_SECRET_ENV
 
 
 def create_snakebite(**config):
@@ -23,10 +23,7 @@ class SnakeBite(object):
 
         self.config = config
 
-        if self.config['auth'].get('testing'):
-            shared_secret = "secret"  # only for dev and testing env
-        else:
-            shared_secret = os.getenv('BENRI_SECRET')
+        shared_secret = os.getenv(AUTH_SHARED_SECRET_ENV)
 
         self.app = falcon.API(
             before=[self.cors_middleware()],
