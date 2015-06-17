@@ -5,39 +5,13 @@ Snakebite is built with Python, and more specifically with Falcon framework and 
 
 To get started, please follow instructions below on how to setup your environment to run Snakebite
 
-## Prerequisite
-
-###Linux (apt-get)
-
-python [setuptools](https://pypi.python.org/pypi/setuptools)
-```
-$ sudo apt-get install python-setuptools
-```
-
-python-dev 
-```
-$ sudo apt-get install python-dev
-```
-mongo-db [Ubuntu](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/) / [Debian](http://docs.mongodb.org/manual/tutorial/install-mongodb-on-debian/)
-
-Import the public key used by the package management system.
-```
-$ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
-```
-Create a list file for MongoDB.
-```
-$ echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list
-```
-Reload local package database.
-```
-$ sudo apt-get update
-```
-Install the MongoDB packages.
-```
-$ sudo apt-get install -y mongodb-org
-```
 
 ## Instructions
+
+> #### Prerequisites for Local Environment
+> Snakebite assumes a MongoDB data store for persistence. Make sure you have [MongoDB installed](https://www.mongodb.org/downloads) and a running instance for Snakebite to connect to. 
+>
+> You may change the settings in the [dev.ini file in config directory](https://github.com/gobbl/snakebite/tree/master/conf).
 
 First, clone this repository onto your local machine
 
@@ -94,7 +68,7 @@ Next, to check tests and coverage reports:
 Let's try to keep the code clean with Flake8, and less bug-free with testing!
 Target coverage: 80% (current: 100%)
 
-## DEPLOYING
+## Deploying
 
 When deploying to environments other than your local environment ('dev'), please ensure that you set the 'BENRI_ENV' environment variable in the OS before running the server.
 This is so that the right config file can be loaded for initializing the application.
