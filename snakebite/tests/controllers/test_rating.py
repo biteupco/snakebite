@@ -2,12 +2,13 @@
 
 from __future__ import absolute_import
 from falcon import testing
-from snakebite.tests import get_test_snakebite
+from snakebite.tests import get_test_snakebite, get_mock_auth_middleware
 from snakebite.controllers import rating
 from snakebite.models.restaurant import Restaurant, Menu
 from snakebite.models.rating import MenuRating
 from snakebite.models.user import User
 import json
+import mock
 
 
 class TestRatingWithSetup(testing.TestBase):
@@ -39,9 +40,10 @@ class TestRatingWithSetup(testing.TestBase):
 class TestRatingCollectionGet(TestRatingWithSetup):
 
     def setUp(self):
-        self.resource = rating.Collection()
-        self.api = get_test_snakebite().app
+        with mock.patch('snakebite.JWTAuthMiddleware', return_value=get_mock_auth_middleware()):
+            self.api = get_test_snakebite().app
 
+        self.resource = rating.Collection()
         self.api.add_route('/rating/menus', self.resource)
         self.srmock = testing.StartResponseMock()
 
@@ -90,9 +92,10 @@ class TestRatingCollectionGet(TestRatingWithSetup):
 class TestRatingItemGet(TestRatingWithSetup):
 
     def setUp(self):
-        self.resource = rating.Item()
-        self.api = get_test_snakebite().app
+        with mock.patch('snakebite.JWTAuthMiddleware', return_value=get_mock_auth_middleware()):
+            self.api = get_test_snakebite().app
 
+        self.resource = rating.Item()
         self.api.add_route('/ratings/menus/{id}', self.resource)
         self.srmock = testing.StartResponseMock()
 
@@ -139,9 +142,10 @@ class TestRatingItemGet(TestRatingWithSetup):
 class TestRatingItemPost(TestRatingWithSetup):
 
     def setUp(self):
-        self.resource = rating.Item()
-        self.api = get_test_snakebite().app
+        with mock.patch('snakebite.JWTAuthMiddleware', return_value=get_mock_auth_middleware()):
+            self.api = get_test_snakebite().app
 
+        self.resource = rating.Item()
         self.api.add_route('/ratings/menus/{id}', self.resource)
         self.srmock = testing.StartResponseMock()
 

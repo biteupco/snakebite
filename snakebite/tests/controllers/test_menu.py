@@ -2,18 +2,19 @@
 
 from __future__ import absolute_import
 from falcon import testing
-from snakebite.tests import get_test_snakebite
+from snakebite.tests import get_test_snakebite, get_mock_auth_middleware
 from snakebite.controllers import menu
 from snakebite.models.restaurant import Restaurant, Menu
 import json
+import mock
 
 
 class TestMenuCollectionGet(testing.TestBase):
-
     def setUp(self):
-        self.resource = menu.Collection()
-        self.api = get_test_snakebite().app
+        with mock.patch('snakebite.JWTAuthMiddleware', return_value=get_mock_auth_middleware()):
+            self.api = get_test_snakebite().app
 
+        self.resource = menu.Collection()
         self.api.add_route('/restaurants', self.resource)
         self.srmock = testing.StartResponseMock()
         self.restaurants = [
@@ -57,7 +58,6 @@ class TestMenuCollectionGet(testing.TestBase):
             {'query_string': 'geolocation=139.729183,35.660429&maxDistance=100', 'expected': {'status': 200, 'count': 2}},
             {'query_string': 'geolocation=139.729183,35.660429&price=0,600', 'expected': {'status': 200, 'count': 3}},
         ]
-
         for t in tests:
             res = self.simulate_request('/menus',
                                         query_string=t['query_string'],
@@ -83,9 +83,10 @@ class TestMenuCollectionGet(testing.TestBase):
 class TestMenuCollectionPost(testing.TestBase):
 
     def setUp(self):
-        self.resource = menu.Collection()
-        self.api = get_test_snakebite().app
+        with mock.patch('snakebite.JWTAuthMiddleware', return_value=get_mock_auth_middleware()):
+            self.api = get_test_snakebite().app
 
+        self.resource = menu.Collection()
         self.api.add_route('/restaurants', self.resource)
         self.srmock = testing.StartResponseMock()
         self.restaurant = Restaurant(name='a', description='a', email='a@b.com',
@@ -127,8 +128,10 @@ class TestMenuCollectionPost(testing.TestBase):
 class TestMenuItemGet(testing.TestBase):
 
     def setUp(self):
+        with mock.patch('snakebite.JWTAuthMiddleware', return_value=get_mock_auth_middleware()):
+            self.api = get_test_snakebite().app
+
         self.resource = menu.Item()
-        self.api = get_test_snakebite().app
         self.api.add_route('/menus/{id}', self.resource)
         self.srmock = testing.StartResponseMock()
 
@@ -177,8 +180,10 @@ class TestMenuItemGet(testing.TestBase):
 class TestMenuItemDelete(testing.TestBase):
 
     def setUp(self):
+        with mock.patch('snakebite.JWTAuthMiddleware', return_value=get_mock_auth_middleware()):
+            self.api = get_test_snakebite().app
+
         self.resource = menu.Item()
-        self.api = get_test_snakebite().app
         self.api.add_route('/menus/{id}', self.resource)
         self.srmock = testing.StartResponseMock()
 
@@ -237,9 +242,10 @@ class TestMenuItemDelete(testing.TestBase):
 class TestMenuItemPut(testing.TestBase):
 
     def setUp(self):
-        self.resource = menu.Item()
-        self.api = get_test_snakebite().app
+        with mock.patch('snakebite.JWTAuthMiddleware', return_value=get_mock_auth_middleware()):
+            self.api = get_test_snakebite().app
 
+        self.resource = menu.Item()
         self.api.add_route('/menus/{id}', self.resource)
         self.srmock = testing.StartResponseMock()
         self.menu = None
