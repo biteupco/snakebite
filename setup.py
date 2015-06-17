@@ -9,7 +9,7 @@ def read_file(filename):
 
 requires = [
     "falcon==0.2.0b1",
-    "Cython==0.21.1",
+    "Cython==0.22",
     "colander==1.0",
     "pymongo==2.8",
     "mongoengine==0.8.7",

@@ -27,7 +27,7 @@ class JWTAuthMiddleware(object):
 
         try:
             decoded = jwt.decode(token, self._secret)
-        except jwt.jwt.InvalidTokenError:
+        except jwt.InvalidTokenError:
             raise HTTPUnauthorized(
                 title='Authorization Failed',
                 description='Invalid JWT token. Unable to decode token.'
