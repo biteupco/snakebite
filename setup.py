@@ -8,7 +8,7 @@ def read_file(filename):
         return infile.read()
 
 requires = [
-    "falcon==0.2.0b1",
+    "falcon==0.3.0",
     "Cython==0.22",
     "colander==1.0",
     "pymongo==2.8",
