@@ -84,10 +84,12 @@ class TestCorsMiddlewares(testing.TestBase):
 class TestAuthMiddleware(testing.TestBase):
     def setUp(self):
         self.api = get_test_snakebite().app
-
         self.resource = status.Status()
         self.api.add_route('/status', self.resource)
         self.srmock = testing.StartResponseMock()
+
+    def tearDown(self):
+        pass
 
     def test_jwt_auth_middleware(self):
         tests = [
@@ -124,9 +126,12 @@ class TestAuthMiddleware(testing.TestBase):
         for test in tests:
             payload = test.get('payload')
             token = jwt.encode(payload, test['secret']) if payload else None
-            qs = 'jwt={}'.format(token) if token else ''
+            qs = 'jwt={}'.format(token) if token else None
 
-            res = self.simulate_request('/status', method='GET', query_string=qs, headers={'accept': 'application/json'})
+            res = self.simulate_request('/status',
+                                        query_string=qs,
+                                        method='GET',
+                                        headers={'accept': 'application/json'})
 
             body = json.loads(res[0])
             self.assertTrue(isinstance(body, dict))
