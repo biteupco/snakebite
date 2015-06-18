@@ -8,7 +8,8 @@ import os
 from mongoengine import connection
 from logging.handlers import TimedRotatingFileHandler
 from snakebite.controllers import restaurant, menu, tag, status, rating, user, batch
-from snakebite.constants import DATETIME_FORMAT
+from snakebite.middlewares.auth import JWTAuthMiddleware
+from snakebite.constants import DATETIME_FORMAT, AUTH_SHARED_SECRET_ENV
 
 
 def create_snakebite(**config):
@@ -22,7 +23,12 @@ class SnakeBite(object):
 
         self.config = config
 
-        self.app = falcon.API(before=[self.cors_middleware()])
+        shared_secret = os.getenv(AUTH_SHARED_SECRET_ENV)
+
+        self.app = falcon.API(
+            before=[self.cors_middleware()],
+            middleware=[JWTAuthMiddleware(shared_secret)]
+        )
         self._set_logging()
         self._setup_db()
         self._load_routes()
@@ -95,7 +101,10 @@ class SnakeBite(object):
         fh = TimedRotatingFileHandler(filename=log_file_path, when='D', interval=1)
         fh.setLevel(logging.DEBUG)
         fh.setFormatter(
-            logging.Formatter(fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt=DATETIME_FORMAT)
+            logging.Formatter(
+                fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                datefmt=DATETIME_FORMAT
+            )
         )
         logger.addHandler(fh)
         return logger

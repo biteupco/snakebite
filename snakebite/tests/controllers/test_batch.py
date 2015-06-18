@@ -2,17 +2,20 @@
 
 from __future__ import absolute_import
 from falcon import testing
-from snakebite.tests import get_test_snakebite
+from snakebite.tests import get_test_snakebite, get_mock_auth_middleware
 from snakebite.controllers import batch
 from snakebite.models.restaurant import Restaurant
 import json
+import mock
 
 
 class TestBatchRestaurantCollectionGet(testing.TestBase):
 
     def setUp(self):
+        with mock.patch('snakebite.JWTAuthMiddleware', return_value=get_mock_auth_middleware()):
+            self.api = get_test_snakebite().app
+
         self.resource = batch.RestaurantCollection()
-        self.api = get_test_snakebite().app
         self.api.add_route('/batch/restaurants', self.resource)
         self.srmock = testing.StartResponseMock()
 

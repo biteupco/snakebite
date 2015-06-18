@@ -5,6 +5,11 @@ from falcon import testing
 import mock
 import logging
 from snakebite.tests import get_test_snakebite
+from snakebite import constants
+from snakebite.controllers import status
+import jwt
+import json
+import os
 
 
 class TestMain(testing.TestBase):
@@ -33,9 +38,9 @@ class TestMain(testing.TestBase):
                 self.assertIn(option, self.config[section])
 
 
-class TestMiddlewares(testing.TestBase):
+class TestCorsMiddlewares(testing.TestBase):
 
-    def test_cors_middleware(self):
+    def test_cors(self):
 
         def _prepare():
             mock_cors_dict = {
@@ -74,3 +79,64 @@ class TestMiddlewares(testing.TestBase):
                 self.assertIn('Access-Control-Allow-Origin', res.headers)
             else:
                 self.assertNotIn('Access-Control-Allow-Origin', res.headers)
+
+
+class TestAuthMiddleware(testing.TestBase):
+    def setUp(self):
+        self.api = get_test_snakebite().app
+        self.resource = status.Status()
+        self.api.add_route('/status', self.resource)
+        self.srmock = testing.StartResponseMock()
+
+    def tearDown(self):
+        pass
+
+    def test_jwt_auth_middleware(self):
+        tests = [
+            {
+                'desc': 'success',
+                'payload': {'sub': 1, 'iss': constants.AUTH_SERVER_NAME, 'acl': 'admin'},
+                'secret': os.getenv(constants.AUTH_SHARED_SECRET_ENV),
+                'expected': {'status': 200}
+            },
+            {
+                'desc': 'missing jwt params',
+                'expected': {'status': 401}
+            },
+            {
+                'desc': 'wrong secret',
+                'payload': {'sub': 1, 'iss': constants.AUTH_SERVER_NAME, 'acl': 'admin'},
+                'secret': 'hush hush',
+                'expected': {'status': 401}
+            },
+            {
+                'desc': 'wrong iss',
+                'payload': {'sub': 1, 'iss': 'butler', 'acl': 'admin'},
+                'secret': os.getenv(constants.AUTH_SHARED_SECRET_ENV),
+                'expected': {'status': 401}
+            },
+            {
+                'desc': 'missing values',
+                'payload': {'iss': 'butler'},
+                'secret': os.getenv(constants.AUTH_SHARED_SECRET_ENV),
+                'expected': {'status': 401}
+            }
+        ]
+
+        for test in tests:
+            payload = test.get('payload')
+            token = jwt.encode(payload, test['secret']) if payload else None
+            qs = 'jwt={}'.format(token) if token else None
+
+            res = self.simulate_request('/status',
+                                        query_string=qs,
+                                        method='GET',
+                                        headers={'accept': 'application/json'})
+
+            body = json.loads(res[0])
+            self.assertTrue(isinstance(body, dict))
+
+            if test['expected']['status'] != 200:
+                self.assertEqual(body['title'], "Authorization Failed")
+            else:
+                self.assertEqual(body, {'ok': True})
