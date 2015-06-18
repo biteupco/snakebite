@@ -15,7 +15,7 @@ class JWTAuthMiddleware(object):
         # TODO implement check of acl against user
         return True
 
-    def process_request(self, req, res, params):
+    def process_request(self, req, res):
 
         # get jwt_token from query string
         token = req.get_param('jwt')
