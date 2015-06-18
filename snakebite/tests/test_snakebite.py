@@ -6,7 +6,7 @@ import mock
 import logging
 from snakebite.tests import get_test_snakebite
 from snakebite import constants
-from snakebite.controllers import restaurant
+from snakebite.controllers import status
 import jwt
 import json
 import os
@@ -84,8 +84,8 @@ class TestMiddlewares(testing.TestBase):
 
         self.api = get_test_snakebite().app
 
-        self.resource = restaurant.Collection()
-        self.api.add_route('/restaurants', self.resource)
+        self.resource = status.Status()
+        self.api.add_route('/status', self.resource)
         self.srmock = testing.StartResponseMock()
 
         tests = [
@@ -124,7 +124,7 @@ class TestMiddlewares(testing.TestBase):
             token = jwt.encode(payload, test['secret']) if payload else None
             qs = 'jwt={}'.format(token) if token else ''
 
-            res = self.simulate_request('/restaurants', method='GET', query_string=qs, headers={'accept': 'application/json'})
+            res = self.simulate_request('/status', method='GET', query_string=qs, headers={'accept': 'application/json'})
 
             body = json.loads(res[0])
             self.assertTrue(isinstance(body, dict))
@@ -132,4 +132,4 @@ class TestMiddlewares(testing.TestBase):
             if test['expected']['status'] != 200:
                 self.assertEqual(body['title'], "Authorization Failed")
             else:
-                self.assertEqual(body['count'], 0)
+                self.assertEqual(body, {'ok': True})
