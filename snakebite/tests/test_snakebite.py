@@ -38,9 +38,9 @@ class TestMain(testing.TestBase):
                 self.assertIn(option, self.config[section])
 
 
-class TestMiddlewares(testing.TestBase):
+class TestCorsMiddlewares(testing.TestBase):
 
-    def test_cors_middleware(self):
+    def test_cors(self):
 
         def _prepare():
             mock_cors_dict = {
@@ -80,14 +80,16 @@ class TestMiddlewares(testing.TestBase):
             else:
                 self.assertNotIn('Access-Control-Allow-Origin', res.headers)
 
-    def test_jwt_auth_middleware(self):
 
+class TestAuthMiddleware(testing.TestBase):
+    def setUp(self):
         self.api = get_test_snakebite().app
 
         self.resource = status.Status()
         self.api.add_route('/status', self.resource)
         self.srmock = testing.StartResponseMock()
 
+    def test_jwt_auth_middleware(self):
         tests = [
             {
                 'desc': 'success',
