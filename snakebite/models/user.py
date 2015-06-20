@@ -25,11 +25,18 @@ class Role(object):
 
 class User(mongo.DynamicDocument):
 
-    name = mongo.StringField(required=True)
+    first_name = mongo.StringField(required=True)
+    last_name = mongo.StringField(required=True)
+    display_name = mongo.StringField(required=True)
+    verification_code = mongo.StringField(required=False)
     email = mongo.EmailField(required=True, unique=True)
     role = mongo.IntField(required=True, default=Role.USER)
     facebook_id = mongo.LongField(required=False)  # Facebook ID is numeric but can be pretty big
     twitter_id = mongo.StringField(required=False)  # Twitter ID is alphanumeric
+    address = mongo.StringField(required=False)
+    zip_code = mongo.StringField(required=False)
+    country_code = mongo.StringField(min_length=2, max_length=2, required=False)  # follows ISO_3166-1
+    tel = mongo.StringField(required=False)  # contact number
 
     @property
     def role_type(self):
