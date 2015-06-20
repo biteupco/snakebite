@@ -24,8 +24,8 @@ class TestRatingWithSetup(testing.TestBase):
         for menu in self.menus:
             menu.save()
         self.users = [
-            User(name='Clarke Kent', email='clarke@kent.com', role=1),
-            User(name='Bruce Wayne', email='bruce@wayne.com', role=9),
+            User(first_name='Clarke', last_name='Kent', display_name='Superman', email='clarke@kent.com', role=1),
+            User(first_name='Bruce', last_name='Wayne', display_name='Batman', email='bruce@wayne.com', role=9),
         ]
         for user in self.users:
             user.save()
