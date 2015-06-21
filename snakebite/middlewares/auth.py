@@ -18,7 +18,7 @@ class JWTAuthMiddleware(object):
     def process_request(self, req, res):
 
         # get jwt_token from query string
-        token = req.get_param('jwt')
+        token = req.get_param('token')
         if not token:
             raise HTTPUnauthorized(
                 title='Authorization Failed',
@@ -30,13 +30,13 @@ class JWTAuthMiddleware(object):
         except jwt.InvalidTokenError:
             raise HTTPUnauthorized(
                 title='Authorization Failed',
-                description='Invalid JWT token. Unable to decode token.'
+                description='Invalid JSON Web Token. Unable to decode token.'
             )
 
         if decoded.pop("iss") != constants.AUTH_SERVER_NAME:
             raise HTTPUnauthorized(
                 title='Authorization Failed',
-                description='Invalid JWT issuer identity.'
+                description='Invalid issuer identity for JSON Web Token.'
             )
 
         user_id = decoded.pop("sub")

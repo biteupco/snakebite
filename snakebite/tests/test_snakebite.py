@@ -126,7 +126,7 @@ class TestAuthMiddleware(testing.TestBase):
         for test in tests:
             payload = test.get('payload')
             token = jwt.encode(payload, test['secret']) if payload else None
-            qs = 'jwt={}'.format(token) if token else None
+            qs = 'token={}'.format(token) if token else None
 
             res = self.simulate_request('/status',
                                         query_string=qs,
