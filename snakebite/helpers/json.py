@@ -3,11 +3,15 @@
 from urlparse import parse_qs
 
 
-def map_query(string):
+def map_query(string, ignores=[]):
 
     query_map = parse_qs(string)
     if not query_map:
         return query_map
+
+    keys_to_remove = [key for key in ignores if key in query_map]
+    for key in keys_to_remove:
+        query_map.pop(key)
 
     for k, v in query_map.iteritems():
         if len(v) == 1:

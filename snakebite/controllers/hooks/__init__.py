@@ -54,7 +54,7 @@ def deserialize(req, res, resource, schema=None):
         if not req.query_string:
             return
 
-        query = map_query(req.query_string)
+        query = map_query(req.query_string, ignores=['token'])
 
         if schema:
             try:
