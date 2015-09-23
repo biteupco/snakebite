@@ -16,7 +16,7 @@ To get started, please follow instructions below on how to setup your environmen
 First, clone this repository onto your local machine
 
 ```
-$ git clone https://github.com/wheresmybento/snakebite.git
+$ git clone https://github.com/gobbl/snakebite.git
 $ cd snakebite
 ```
 
