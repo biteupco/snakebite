@@ -6,6 +6,7 @@ import mock
 import logging
 from snakebite.tests import get_test_snakebite
 from snakebite import constants
+from snakebite.models.user import User, Role
 from snakebite.controllers import status
 import jwt
 import json
@@ -88,14 +89,22 @@ class TestAuthMiddleware(testing.TestBase):
         self.api.add_route('/status', self.resource)
         self.srmock = testing.StartResponseMock()
 
+        users = [
+            User(first_name='Clarke', last_name='Kent', display_name='Clarke Kent', email='superman@gmail.com', role=Role.USER)
+        ]
+        self.users = []
+        for user in users:
+            user.save()
+            self.users.append(user)
+
     def tearDown(self):
-        pass
+        User.objects.delete()
 
     def test_jwt_auth_middleware(self):
         tests = [
             {
                 'desc': 'success',
-                'payload': {'sub': 1, 'iss': constants.AUTH_SERVER_NAME, 'acl': 'admin'},
+                'payload': {'sub': str(self.users[0].id), 'iss': constants.AUTH_SERVER_NAME, 'acl': 'admin'},
                 'secret': os.getenv(constants.AUTH_SHARED_SECRET_ENV),
                 'expected': {'status': 200}
             },
@@ -105,19 +114,25 @@ class TestAuthMiddleware(testing.TestBase):
             },
             {
                 'desc': 'wrong secret',
-                'payload': {'sub': 1, 'iss': constants.AUTH_SERVER_NAME, 'acl': 'admin'},
+                'payload': {'sub': str(self.users[0].id), 'iss': constants.AUTH_SERVER_NAME, 'acl': 'admin'},
                 'secret': 'hush hush',
                 'expected': {'status': 401}
             },
             {
                 'desc': 'wrong iss',
-                'payload': {'sub': 1, 'iss': 'butler', 'acl': 'admin'},
+                'payload': {'sub': str(self.users[0].id), 'iss': 'butler', 'acl': 'admin'},
                 'secret': os.getenv(constants.AUTH_SHARED_SECRET_ENV),
                 'expected': {'status': 401}
             },
             {
                 'desc': 'missing values',
                 'payload': {'iss': 'butler'},
+                'secret': os.getenv(constants.AUTH_SHARED_SECRET_ENV),
+                'expected': {'status': 401}
+            },
+            {
+                'desc': 'invalid user id',
+                'payload': {'sub': 'whosyourdaddy', 'iss': constants.AUTH_SERVER_NAME, 'acl': 'admin'},
                 'secret': os.getenv(constants.AUTH_SHARED_SECRET_ENV),
                 'expected': {'status': 401}
             }
