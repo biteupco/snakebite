@@ -10,11 +10,13 @@ class Role(object):
     # TODO: add Restaurant Manager role
     ADMIN = 9
     EMPLOYEE = 8
+    OWNER = 4
     USER = 1
 
     ROLE_MAP = {
         ADMIN: 'admin',
         EMPLOYEE: 'employee',
+        OWNER: 'restaurant_owner',
         USER: 'user'
     }
 
@@ -41,3 +43,6 @@ class User(mongo.DynamicDocument):
     @property
     def role_type(self):
         return Role.get_role_type(self.role)
+
+    def role_satisfy(self, role):
+        return self.role >= role
