@@ -34,6 +34,9 @@ ACL_MAP = {
         'get': Role.EMPLOYEE,
         'put': Role.EMPLOYEE,
         'delete': Role.EMPLOYEE
+    },
+    '/status': {
+        'get': Role.USER
     }
 }
 
