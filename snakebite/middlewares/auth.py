@@ -31,7 +31,7 @@ ACL_MAP = {
         'post': Role.EMPLOYEE,
     },
     '/users/+': {
-        'get': Role.EMPLOYEE,
+        'get': Role.USER,
         'put': Role.EMPLOYEE,
         'delete': Role.EMPLOYEE
     },
@@ -104,5 +104,5 @@ class JWTAuthMiddleware(object):
             )
 
         # user is authorized!
-        # set user ID in request header
-        req.headers[constants.AUTH_HEADER_USER_ID] = user_id
+        # set user ID in request params
+        req.params[constants.AUTH_HEADER_USER_ID] = user_id
