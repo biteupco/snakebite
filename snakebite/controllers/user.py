@@ -5,8 +5,8 @@ import falcon
 import logging
 from snakebite import constants
 from snakebite.controllers.hooks import deserialize, serialize
-from snakebite.models.user import User
-from snakebite.libs.error import HTTPBadRequest
+from snakebite.models.user import User, Role
+from snakebite.libs.error import HTTPBadRequest, HTTPUnauthorized
 from mongoengine.errors import DoesNotExist, MultipleObjectsReturned, ValidationError
 
 
@@ -49,8 +49,14 @@ class Item(object):
         except (ValidationError, DoesNotExist, MultipleObjectsReturned) as e:
             raise HTTPBadRequest(title='Invalid Value', description='Invalid ID provided. {}'.format(e.message))
 
-    @falcon.before(deserialize)
     @falcon.after(serialize)
     def on_get(self, req, res, id):
+        request_user_id = req.params[constants.AUTH_HEADER_USER_ID]
+        request_user = User.objects.get(id=request_user_id)
+        if not request_user.role_satisfy(Role.EMPLOYEE):
+            # ensure requested user profile is request user him/herself
+            if request_user_id != id:
+                raise HTTPUnauthorized(title='Unauthorized Request',
+                                       description='Not allowed to request for user resource: {}'.format(id))
         user = self._try_get_user(id)
         res.body = user
