@@ -27,6 +27,7 @@ class HTTPNotAcceptable(falcon.HTTPNotAcceptable):
     """
     pass
 
+
 class HTTPServiceUnavailable(falcon.HTTPServiceUnavailable):
     """
     wrapper for HTTP Service Unavailable response

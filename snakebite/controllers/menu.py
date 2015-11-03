@@ -107,7 +107,6 @@ class Collection(object):
 
         res.body = {'items': menus, 'count': len(menus)}
 
-
     @falcon.before(deserialize_create)
     @falcon.after(serialize)
     def on_post(self, req, res):

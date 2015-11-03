@@ -17,7 +17,6 @@ def get_config(env='dev'):
     if not config_parser.read(file_path):
         raise IOError('Invalid Config File. ConfigParser could not read config file: {}'.format(file_path))
 
-
     config_map = {}
     for section in config_parser.sections():
         config_map[section] = {k: v for (k, v) in config_parser.items(section)}
