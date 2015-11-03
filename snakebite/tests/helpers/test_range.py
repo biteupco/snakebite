@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
+
 from falcon import testing
-from snakebite.helpers.range import min_max
+
 from snakebite.constants import INTEGER_MAX
+from snakebite.helpers.range import min_max
 
 
 class Testrange(testing.TestBase):

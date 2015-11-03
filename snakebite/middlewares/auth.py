@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
+
 from __future__ import absolute_import
+
 import jwt
-from snakebite.libs.error import HTTPUnauthorized
-from snakebite.services.user import get_user
-from snakebite.models.user import Role
+
 from snakebite import constants
+from snakebite.libs.error import HTTPUnauthorized
+from snakebite.models.user import Role
+from snakebite.services.user import get_user
+
 
 # role-based permission control
 ACL_MAP = {

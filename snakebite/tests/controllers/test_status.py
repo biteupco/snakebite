@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
-from falcon import testing
-from snakebite.tests import get_test_snakebite, get_mock_auth_middleware
-from snakebite.controllers import status
+
 import json
+
+from falcon import testing
+
 import mock
+
+from snakebite.controllers import status
+from snakebite.tests import get_mock_auth_middleware, get_test_snakebite
 
 
 class TestRestaurantCollectionGet(testing.TestBase):

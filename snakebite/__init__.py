@@ -1,15 +1,20 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
+
 import __builtin__
-import falcon
 import logging
 import os
-from mongoengine import connection
+
 from logging.handlers import TimedRotatingFileHandler
-from snakebite.controllers import restaurant, menu, tag, status, rating, user, batch
+
+import falcon
+
+from mongoengine import connection
+
+from snakebite.constants import AUTH_SHARED_SECRET_ENV, DATETIME_FORMAT
+from snakebite.controllers import batch, menu, rating, restaurant, status, tag, user
 from snakebite.middlewares.auth import JWTAuthMiddleware
-from snakebite.constants import DATETIME_FORMAT, AUTH_SHARED_SECRET_ENV
 
 
 def create_snakebite(**config):

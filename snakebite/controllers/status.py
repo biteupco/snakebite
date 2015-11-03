@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
-import falcon
+
 import logging
+
+import falcon
+
 from snakebite.controllers.hooks import serialize
-from snakebite.models.restaurant import Restaurant
 from snakebite.libs.error import HTTPServiceUnavailable
+from snakebite.models.restaurant import Restaurant
 
 logger = logging.getLogger(__name__)
 

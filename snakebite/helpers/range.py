@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
-from snakebite.constants import INTEGER_MAX
+
 import __builtin__
+
+from snakebite.constants import INTEGER_MAX
 
 
 def min_max(range_str, type='int', delimiter=',', min=0, max=INTEGER_MAX):

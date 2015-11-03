@@ -1,16 +1,22 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
-from falcon import testing
-import mock
-import logging
-from snakebite.tests import get_test_snakebite
-from snakebite import constants
-from snakebite.models.user import User, Role
-from snakebite.controllers import status
-import jwt
+
+
 import json
+import logging
 import os
+
+from falcon import testing
+
+import jwt
+
+import mock
+
+from snakebite import constants
+from snakebite.controllers import status
+from snakebite.models.user import Role, User
+from snakebite.tests import get_test_snakebite
 
 
 class TestMain(testing.TestBase):

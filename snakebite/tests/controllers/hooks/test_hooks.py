@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
-import colander
-import mock
-from falcon import testing
+
 from ast import literal_eval as eval
-from snakebite.controllers.hooks import serialize, deserialize
+
+import colander
+
+from falcon import testing
+
+import mock
+
+from snakebite.controllers.hooks import deserialize, serialize
 from snakebite.libs.error import HTTPBadRequest, HTTPNotAcceptable
 
 dummy = mock.Mock()

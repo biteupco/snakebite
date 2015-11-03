@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
+
+from bson import json_util
+
+import colander
+
+import mongoengine as mongo
+
 from snakebite.helpers.json import map_query
 from snakebite.libs.error import HTTPBadRequest, HTTPNotAcceptable
-import mongoengine as mongo
-from bson import json_util
-import colander
 
 
 def deserialize(req, res, resource, schema=None):

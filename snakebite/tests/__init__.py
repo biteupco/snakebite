@@ -3,9 +3,12 @@
 # Here lists all convenience / helper methods commonly used for testing purposes
 
 from __future__ import absolute_import
+
 from conf import get_config
-from snakebite import create_snakebite
+
 import mock
+
+from snakebite import create_snakebite
 
 
 def get_test_snakebite():

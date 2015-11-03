@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
+
 import mongoengine as mongo
-from snakebite.models.user import User
+
 from snakebite.models.restaurant import Menu
+from snakebite.models.user import User
 
 
 class MenuRating(mongo.DynamicDocument):

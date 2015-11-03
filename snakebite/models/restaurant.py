@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
+
 import mongoengine as mongo
+
 from snakebite.constants import TWEET_CHAR_LENGTH
 
 

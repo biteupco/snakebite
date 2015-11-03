@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
-import falcon
+
 import logging
+
+import falcon
+
+from mongoengine.errors import DoesNotExist, MultipleObjectsReturned, ValidationError
+
 from snakebite import constants
 from snakebite.controllers.hooks import deserialize, serialize
-from snakebite.models.user import User, Role
 from snakebite.libs.error import HTTPBadRequest, HTTPUnauthorized
-from mongoengine.errors import DoesNotExist, MultipleObjectsReturned, ValidationError
+from snakebite.models.user import Role, User
 
 
 # -------- BEFORE_HOOK functions
