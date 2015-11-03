@@ -126,8 +126,6 @@ class TestDeserialize(testing.TestBase):
 class TestSerialize(testing.TestBase):
 
     def test_serialize(self):
-
-
         tests = [
             {'body': {}, 'expected': '{}'},
             {'body': {'name': 'siri', 'age': 1}, 'expected': '{"name": "siri", "age": 1}'}

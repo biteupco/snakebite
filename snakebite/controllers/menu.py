@@ -140,7 +140,6 @@ class Item(object):
         menu = self._try_get_menu(id)
         res.body = menu
 
-
     @falcon.after(serialize)
     def on_delete(self, req, res, id):
         menu = self._try_get_menu(id)

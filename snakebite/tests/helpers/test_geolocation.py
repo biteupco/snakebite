@@ -75,7 +75,6 @@ class TestGeolocation(testing.TestBase):
                 setattr(dummy, k, v)
             return dummy
 
-
         tests = [
             {
                 'obj': _create_dummy_obj(),

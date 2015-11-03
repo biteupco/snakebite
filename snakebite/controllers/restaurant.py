@@ -99,8 +99,8 @@ class Collection(object):
         restaurant.save()
         menus = []
         for mdata in menu_data:
-          mdata.update({'restaurant': restaurant})
-          menus.append(Menu(**mdata))  # extract info meant for menus
+            mdata.update({'restaurant': restaurant})
+            menus.append(Menu(**mdata))  # extract info meant for menus
 
         Menu.objects.insert(menus)
 

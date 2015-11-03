@@ -38,5 +38,4 @@ setup(name='snakebite',
       zip_safe=False,
       test_suite='snakebite',
       install_requires=requires,
-      extras_require=extras_require,
-)
+      extras_require=extras_require)
