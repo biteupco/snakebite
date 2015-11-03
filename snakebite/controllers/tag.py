@@ -3,7 +3,6 @@
 from __future__ import absolute_import
 
 import logging
-
 from operator import itemgetter
 
 import falcon
@@ -11,7 +10,6 @@ import falcon
 from snakebite.controllers.hooks import deserialize, serialize
 from snakebite.libs.error import HTTPBadRequest
 from snakebite.models.restaurant import Menu
-
 
 logger = logging.getLogger(__name__)
 

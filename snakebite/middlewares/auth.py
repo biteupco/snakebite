@@ -9,7 +9,6 @@ from snakebite.libs.error import HTTPUnauthorized
 from snakebite.models.user import Role
 from snakebite.services.user import get_user
 
-
 # role-based permission control
 ACL_MAP = {
     '/menus': {

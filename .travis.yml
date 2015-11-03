@@ -17,6 +17,7 @@ services:
 script:
   - coverage run --source=snakebite setup.py nosetests
   - python setup.py flake8
+  - python setup.py isort
 
 after_success:
   coveralls

@@ -7,7 +7,6 @@ import json
 from falcon import testing
 
 import mock
-
 from snakebite.controllers import rating
 from snakebite.models.rating import MenuRating
 from snakebite.models.restaurant import Menu, Restaurant

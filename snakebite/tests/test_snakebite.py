@@ -2,17 +2,14 @@
 
 from __future__ import absolute_import
 
-
 import json
 import logging
 import os
 
+import jwt
 from falcon import testing
 
-import jwt
-
 import mock
-
 from snakebite import constants
 from snakebite.controllers import status
 from snakebite.models.user import Role, User

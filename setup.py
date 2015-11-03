@@ -23,7 +23,7 @@ extras_require = {
         "coverage",
         "flake8",
         "mock",
-        "flake8-import-order[flake8]",
+        "isort",
     ]
 }
 

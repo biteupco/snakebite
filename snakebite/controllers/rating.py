@@ -3,11 +3,10 @@
 from __future__ import absolute_import
 
 import falcon
-
-from mongoengine.errors import DoesNotExist, MultipleObjectsReturned, ValidationError
+from mongoengine.errors import (DoesNotExist, MultipleObjectsReturned,
+                                ValidationError)
 
 from snakebite import constants
-
 from snakebite.controllers.hooks import deserialize, serialize
 from snakebite.controllers.schema.rating import MenuRatingSchema
 from snakebite.libs.error import HTTPBadRequest

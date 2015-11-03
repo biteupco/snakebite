@@ -7,7 +7,6 @@ import json
 from falcon import testing
 
 import mock
-
 from snakebite import constants
 from snakebite.controllers import user
 from snakebite.models.user import Role, User

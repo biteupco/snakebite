@@ -5,13 +5,13 @@ from __future__ import absolute_import
 import logging
 
 import falcon
-
-from mongoengine.errors import DoesNotExist, MultipleObjectsReturned, ValidationError
+from mongoengine.errors import (DoesNotExist, MultipleObjectsReturned,
+                                ValidationError)
 
 from snakebite import constants
-
 from snakebite.controllers.hooks import deserialize, serialize
-from snakebite.controllers.schema.restaurant import MenuCreateSchema, MenuSchema
+from snakebite.controllers.schema.restaurant import (MenuCreateSchema,
+                                                     MenuSchema)
 from snakebite.helpers.range import min_max
 from snakebite.libs.error import HTTPBadRequest
 from snakebite.models.restaurant import Menu, Restaurant

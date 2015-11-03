@@ -2,7 +2,8 @@
 
 from __future__ import absolute_import
 
-from mongoengine.errors import DoesNotExist, MultipleObjectsReturned, ValidationError
+from mongoengine.errors import (DoesNotExist, MultipleObjectsReturned,
+                                ValidationError)
 
 from snakebite.models.user import User
 

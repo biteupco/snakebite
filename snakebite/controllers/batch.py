@@ -5,14 +5,14 @@ from __future__ import absolute_import
 import logging
 
 import falcon
-
-from mongoengine.errors import DoesNotExist, MultipleObjectsReturned, ValidationError
+from mongoengine.errors import (DoesNotExist, MultipleObjectsReturned,
+                                ValidationError)
 
 from snakebite.controllers.hooks import deserialize, serialize
-from snakebite.helpers.geolocation import reformat_geolocations_point_field_to_map
+from snakebite.helpers.geolocation import \
+    reformat_geolocations_point_field_to_map
 from snakebite.libs.error import HTTPBadRequest
 from snakebite.models.restaurant import Restaurant
-
 
 logger = logging.getLogger(__name__)
 

@@ -7,7 +7,6 @@ import json
 from falcon import testing
 
 import mock
-
 from snakebite.controllers import batch
 from snakebite.models.restaurant import Restaurant
 from snakebite.tests import get_mock_auth_middleware, get_test_snakebite
