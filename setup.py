@@ -28,16 +28,15 @@ extras_require = {
 }
 
 setup(name='snakebite',
-    version='0.1.0',
-    description='backend server for Benri',
-    long_description=read_file('README.md'),
-    author='Benri',
-    author_email='get.benri@gmail.com',
-    keywords='web wsgi falcon restful japan',
-    packages=find_packages(),
-    include_package_data=True,
-    zip_safe=False,
-    test_suite='snakebite',
-    install_requires=requires,
-    extras_require=extras_require,
-)
+      version='0.1.0',
+      description='backend server for Benri',
+      long_description=read_file('README.md'),
+      author='Benri',
+      author_email='get.benri@gmail.com',
+      keywords='web wsgi falcon restful japan',
+      packages=find_packages(),
+      include_package_data=True,
+      zip_safe=False,
+      test_suite='snakebite',
+      install_requires=requires,
+      extras_require=extras_require)

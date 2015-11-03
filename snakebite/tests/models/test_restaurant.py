@@ -46,7 +46,7 @@ class TestRestaurant(testing.TestBase):
             attributes = r['dict']
             restaurant = Restaurant(**attributes)
             restaurant.save()
-            self.assertEquals(len(Restaurant.objects), i+1)
+            self.assertEquals(len(Restaurant.objects), i + 1)
 
     def test_remove(self):
         Restaurant.objects(name__in=['a', 'b']).delete()

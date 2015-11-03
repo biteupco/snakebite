@@ -40,7 +40,7 @@ class TestRestaurantCollectionGet(testing.TestBase):
         tests = [
             {'query_string': '', 'expected': {"status": 200, "count": len(tags), "tags": tags}},
             {'query_string': 'limit=3', 'expected': {"status": 200, "count": 3, "tags": tags[:3]}},
-            {'query_string': 'start=3&limit=4', 'expected': {"status": 200, "count": 4, "tags": tags[3:3+4]}},
+            {'query_string': 'start=3&limit=4', 'expected': {"status": 200, "count": 4, "tags": tags[3:3 + 4]}},
             {'query_string': 'start=1limit=1', 'expected': {"status": 400}}
         ]
         for t in tests:

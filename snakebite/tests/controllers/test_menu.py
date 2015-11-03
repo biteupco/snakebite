@@ -51,7 +51,7 @@ class TestMenuCollectionGet(testing.TestBase):
         tests = [
             {'query_string': 'start=2a', 'expected': {'status': 400}},
             {'query_string': '', 'expected': {'status': 200, 'count': len(self.menus)}},
-            {'query_string': 'start=1', 'expected': {'status': 200, 'count': len(self.menus)-1}},
+            {'query_string': 'start=1', 'expected': {'status': 200, 'count': len(self.menus) - 1}},
             {'query_string': 'price=0,500', 'expected': {'status': 200, 'count': 1}},
             {'query_string': 'price=500,0', 'expected': {'status': 200, 'count': 1}},
             {'query_string': 'price=500,800', 'expected': {'status': 200, 'count': 3}},

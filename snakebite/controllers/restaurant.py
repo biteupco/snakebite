@@ -92,7 +92,6 @@ class Collection(object):
 
         res.body = {'items': restaurants, 'count': len(restaurants)}
 
-
     @falcon.before(deserialize_create)
     @falcon.after(serialize)
     def on_post(self, req, res):
@@ -105,8 +104,8 @@ class Collection(object):
         restaurant.save()
         menus = []
         for mdata in menu_data:
-          mdata.update({'restaurant': restaurant})
-          menus.append(Menu(**mdata))  # extract info meant for menus
+            mdata.update({'restaurant': restaurant})
+            menus.append(Menu(**mdata))  # extract info meant for menus
 
         Menu.objects.insert(menus)
 
@@ -130,7 +129,6 @@ class Item(object):
     def on_get(self, req, res, id):
         restaurant = self._try_get_restaurant(id)
         res.body = reformat_geolocations_point_field_to_map(restaurant, 'geolocation')
-
 
     @falcon.after(serialize)
     def on_delete(self, req, res, id):

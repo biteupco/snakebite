@@ -112,7 +112,6 @@ class Collection(object):
 
         res.body = {'items': menus, 'count': len(menus)}
 
-
     @falcon.before(deserialize_create)
     @falcon.after(serialize)
     def on_post(self, req, res):
@@ -145,7 +144,6 @@ class Item(object):
     def on_get(self, req, res, id):
         menu = self._try_get_menu(id)
         res.body = menu
-
 
     @falcon.after(serialize)
     def on_delete(self, req, res, id):
