@@ -2,9 +2,9 @@
 
 from __future__ import absolute_import
 
+import mock
 from falcon import testing
 
-import mock
 from snakebite.helpers.geolocation import (reformat_geolocations_map_to_list,
                                            reformat_geolocations_point_field_to_map)
 

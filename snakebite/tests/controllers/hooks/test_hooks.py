@@ -5,9 +5,9 @@ from __future__ import absolute_import
 from ast import literal_eval as eval
 
 import colander
+import mock
 from falcon import testing
 
-import mock
 from snakebite.controllers.hooks import deserialize, serialize
 from snakebite.libs.error import HTTPBadRequest, HTTPNotAcceptable
 

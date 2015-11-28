@@ -3,9 +3,9 @@
 from __future__ import absolute_import
 
 import colander
+import mock
 from falcon import testing
 
-import mock
 from snakebite.helpers.schema import CommaIntList, CommaList, Currency
 
 dummy = mock.Mock()
