@@ -1,15 +1,21 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
-import falcon
+
 import logging
+
+import falcon
+from mongoengine.errors import (DoesNotExist, MultipleObjectsReturned,
+                                ValidationError)
+
 from snakebite import constants
 from snakebite.controllers.hooks import deserialize, serialize
-from snakebite.controllers.schema.restaurant import RestaurantSchema, RestaurantCreateSchema
-from snakebite.models.restaurant import Restaurant, Menu
+from snakebite.controllers.schema.restaurant import (RestaurantCreateSchema,
+                                                     RestaurantSchema)
+from snakebite.helpers.geolocation import (reformat_geolocations_map_to_list,
+                                           reformat_geolocations_point_field_to_map)
 from snakebite.libs.error import HTTPBadRequest
-from snakebite.helpers.geolocation import reformat_geolocations_map_to_list, reformat_geolocations_point_field_to_map
-from mongoengine.errors import DoesNotExist, MultipleObjectsReturned, ValidationError
+from snakebite.models.restaurant import Menu, Restaurant
 
 
 # -------- BEFORE_HOOK functions

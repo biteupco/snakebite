@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
-from falcon import testing
-from snakebite.tests import get_test_snakebite, get_mock_auth_middleware
-from snakebite.controllers import rating
-from snakebite.models.restaurant import Restaurant, Menu
-from snakebite.models.rating import MenuRating
-from snakebite.models.user import User
+
 import json
+
 import mock
+from falcon import testing
+
+from snakebite.controllers import rating
+from snakebite.models.rating import MenuRating
+from snakebite.models.restaurant import Menu, Restaurant
+from snakebite.models.user import User
+from snakebite.tests import get_mock_auth_middleware, get_test_snakebite
 
 
 class TestRatingWithSetup(testing.TestBase):

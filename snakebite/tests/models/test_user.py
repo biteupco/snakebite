@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
+
 from falcon import testing
-from snakebite.models.user import User, Role
+
+from snakebite.models.user import Role, User
 
 
 class TestUser(testing.TestBase):

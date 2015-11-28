@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
-import colander
+
 import decimal
+
+import colander
+
 from snakebite.constants import TWEET_CHAR_LENGTH
-from snakebite.controllers.schema.common import Images, Tags, Geolocation
+from snakebite.controllers.schema.common import Geolocation, Images, Tags
 from snakebite.helpers.schema import Currency
 
 

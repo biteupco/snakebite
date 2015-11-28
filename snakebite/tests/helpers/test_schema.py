@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
-from falcon import testing
+
 import colander
 import mock
-from snakebite.helpers.schema import CommaList, CommaIntList, Currency
+from falcon import testing
+
+from snakebite.helpers.schema import CommaIntList, CommaList, Currency
 
 dummy = mock.Mock()
 

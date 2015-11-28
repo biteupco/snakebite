@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
+
 from falcon import testing
+
 from snakebite.models.restaurant import Restaurant
 
 

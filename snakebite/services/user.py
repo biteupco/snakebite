@@ -1,6 +1,11 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import absolute_import
+
+from mongoengine.errors import (DoesNotExist, MultipleObjectsReturned,
+                                ValidationError)
+
 from snakebite.models.user import User
-from mongoengine.errors import DoesNotExist, MultipleObjectsReturned, ValidationError
 
 
 def get_user(user_id):

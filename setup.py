@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 
 def read_file(filename):
@@ -22,7 +22,8 @@ extras_require = {
         "nose",
         "coverage",
         "flake8",
-        "mock"
+        "mock",
+        "isort",
     ]
 }
 

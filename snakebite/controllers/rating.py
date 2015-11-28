@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
+
 import falcon
+from mongoengine.errors import (DoesNotExist, MultipleObjectsReturned,
+                                ValidationError)
+
 from snakebite import constants
 from snakebite.controllers.hooks import deserialize, serialize
 from snakebite.controllers.schema.rating import MenuRatingSchema
-from snakebite.models.restaurant import Menu
-from snakebite.models.rating import MenuRating
-from snakebite.models.user import User
 from snakebite.libs.error import HTTPBadRequest
-from mongoengine.errors import DoesNotExist, MultipleObjectsReturned, ValidationError
+from snakebite.models.rating import MenuRating
+from snakebite.models.restaurant import Menu
+from snakebite.models.user import User
 
 
 # -------- BEFORE_HOOK functions

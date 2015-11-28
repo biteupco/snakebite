@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
+
 import mock
 from falcon import testing
-from snakebite.helpers.geolocation import reformat_geolocations_point_field_to_map, \
-    reformat_geolocations_map_to_list
+
+from snakebite.helpers.geolocation import (reformat_geolocations_map_to_list,
+                                           reformat_geolocations_point_field_to_map)
 
 
 class TestGeolocation(testing.TestBase):
